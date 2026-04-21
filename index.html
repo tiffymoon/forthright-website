@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forthright Events Management</title>
+  <meta name="description" content="Forthright Events Management specialises in sports tournaments, corporate events, and team building across the Philippines.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="logo" onclick="scrollToTop(event)">
+      <span class="logo-main">FORTHRIGHT</span>
+      <span class="logo-sub">Events Management</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="admin/" class="nav-admin" title="Admin">⚙</a>
+    <button class="burger" id="burger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about" onclick="toggleMenu()">About</a>
+    <a href="#services" onclick="toggleMenu()">Services</a>
+    <a href="#events" onclick="toggleMenu()">Events</a>
+    <a href="#contact" onclick="toggleMenu()">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg">
+      <div class="hero-grid"></div>
+      <div class="hero-glow"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Sports · Corporate · Team Building</p>
+      <h1 class="hero-title">
+        We Make<br>
+        <em>Events</em><br>
+        Happen.
+      </h1>
+      <p class="hero-body">From intercompany tournaments to gala nights — Forthright brings the energy, the logistics, and the finishing touch.</p>
+      <div class="hero-actions">
+        <a href="#events" class="btn btn-primary">View Events</a>
+        <a href="#contact" class="btn btn-outline">Get a Quote</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">200+</span><span class="stat-label">Events Delivered</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">50k+</span><span class="stat-label">Participants</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">10+</span><span class="stat-label">Years Running</span></div>
+    </div>
+    <a href="#about" class="hero-scroll" aria-label="Scroll down">
+      <span class="scroll-line"></span>
+      <span class="scroll-text">Scroll</span>
+    </a>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <p class="section-tag">Who We Are</p>
+          <h2>Built for the <em>Game</em> — in every sense.</h2>
+          <p>Forthright Events Management has been crafting memorable sports and corporate events since the beginning. We handle everything from concept to cleanup, so your people can focus on what matters: competing, connecting, and celebrating.</p>
+          <p>Whether you need a full-scale inter-company sportsfest or a polished year-end gala, our team brings the same energy, rigour, and passion to every event.</p>
+        </div>
+        <div class="about-image">
+          <div class="about-img-frame">
+            <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=700&q=80" alt="Forthright Events in action" loading="lazy">
+            <div class="img-badge">
+              <span>Est.</span>
+              <strong>2013</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">What We Do</p>
+        <h2>Every Event. <em>Done Right.</em></h2>
+      </div>
+      <div class="services-grid">
+        <div class="service-card service-card--featured">
+          <div class="service-icon">🏆</div>
+          <h3>Sports Tournaments</h3>
+          <p>Full tournament management for basketball, volleyball, football, badminton, and more. Format design, officiating, scoring, and trophies.</p>
+          <span class="service-tag">Flagship</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🎽</div>
+          <h3>Sports Days & Leagues</h3>
+          <p>Company sports days, multi-week leagues, and fun runs. We design the format, run the logistics, and keep the energy high all day.</p>
+          <span class="service-tag">Sports</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🤝</div>
+          <h3>Team Building</h3>
+          <p>Purpose-designed challenges that build real trust — from urban scavenger hunts to Olympic-style relays, tailored to your team's size and culture.</p>
+          <span class="service-tag">Team Building</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🏛️</div>
+          <h3>Corporate Events</h3>
+          <p>Conferences, product launches, networking evenings, and awards ceremonies. End-to-end production with meticulous attention to every detail.</p>
+          <span class="service-tag">Corporate</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENTS -->
+  <section class="events-section" id="events">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Events</p>
+        <h2>Upcoming &amp; <em>Past</em></h2>
+      </div>
+      <div class="events-tabs">
+        <button class="tab-btn active" id="tab-upcoming" onclick="switchTab('upcoming')">Upcoming Events</button>
+        <button class="tab-btn" id="tab-past" onclick="switchTab('past')">Past Events</button>
+      </div>
+
+      <!-- Upcoming Tab -->
+      <div class="tab-panel active" id="panel-upcoming">
+        <div class="calendar-strip" id="calendarStrip"></div>
+        <div class="events-grid" id="upcomingGrid">
+          <div class="events-loading">Loading events…</div>
+        </div>
+      </div>
+
+      <!-- Past Tab -->
+      <div class="tab-panel" id="panel-past">
+        <div class="past-grid" id="pastGrid">
+          <div class="events-loading">Loading events…</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band">
+    <div class="container">
+      <h2>Ready to plan your next event?</h2>
+      <p>Let's talk about what you have in mind.</p>
+      <a href="#contact" class="btn btn-primary btn-lg">Get in Touch</a>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <p class="section-tag">Contact Us</p>
+          <h2>Let's Build Something <em>Great</em></h2>
+          <p>Have a sports tournament, team building event, or corporate occasion coming up? Reach out and we'll put together a proposal.</p>
+          <div class="contact-details">
+            <div class="contact-item">
+              <span class="contact-icon">📍</span>
+              <span>Metro Manila, Philippines</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon">📞</span>
+              <span>+63 917 000 0000</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon">✉️</span>
+              <span>hello@forthrightevents.com</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon">📘</span>
+              <a href="https://www.facebook.com/forthrightevents" target="_blank" rel="noopener">facebook.com/forthrightevents</a>
+            </div>
+          </div>
+        </div>
+        <form class="contact-form" id="contactForm" onsubmit="submitForm(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Your Name</label>
+              <input type="text" placeholder="Juan dela Cruz" required>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" placeholder="juan@company.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Event Type</label>
+            <select required>
+              <option value="" disabled selected>Select a service</option>
+              <option>Sports Tournament</option>
+              <option>Sports Day / Fun Run</option>
+              <option>Team Building</option>
+              <option>Corporate Event / Gala</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tell us about your event</label>
+            <textarea rows="4" placeholder="Rough date, number of participants, venue ideas…" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Send Enquiry</button>
+          <div class="form-success" id="formSuccess">
+            ✅ Thanks! We'll be in touch within one business day.
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <span class="logo-main">FORTHRIGHT</span>
+          <span class="logo-sub">Events Management</span>
+        </div>
+        <p class="footer-copy">© <span id="footerYear"></span> Forthright Events Management. All rights reserved.</p>
+        <a href="admin/" class="footer-admin">Admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

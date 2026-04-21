@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Forthright Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- LOGIN SCREEN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="logo-main">FORTHRIGHT</span>
+        <span class="logo-sub">Events Management</span>
+      </div>
+      <h2>Admin Access</h2>
+      <p>Sign in with your Forthright admin account.</p>
+      <div class="login-form">
+        <input type="email"    id="emailInput"    placeholder="Email address" autocomplete="email">
+        <input type="password" id="passwordInput" placeholder="Password"      autocomplete="current-password">
+        <button class="btn btn-primary btn-full" id="loginBtn" onclick="doLogin()">Sign In</button>
+        <div class="login-error" id="loginError"></div>
+      </div>
+      <a href="../" class="login-back">← Back to site</a>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="adminPanel" style="display:none">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-main">FORTHRIGHT</span>
+        <span class="logo-sub">Admin</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" onclick="showSection('events')" id="link-events">
+          <span>📅</span> Events
+        </a>
+        <a class="sidebar-link" onclick="showSection('add')" id="link-add">
+          <span>➕</span> Add Event
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="../" class="sidebar-link dim">
+          <span>🌐</span> View Site
+        </a>
+        <button class="sidebar-link dim" onclick="doLogout()">
+          <span>🚪</span> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+
+      <!-- Events list -->
+      <section class="admin-section active" id="section-events">
+        <div class="admin-header">
+          <div>
+            <h1>All Events</h1>
+            <p>Add, edit, or remove events. Changes go live on the site instantly.</p>
+          </div>
+          <div class="admin-header-actions">
+            <select id="filterStatus" onchange="filterEvents()" class="filter-select">
+              <option value="all">All Status</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="past">Past</option>
+            </select>
+            <select id="filterCat" onchange="filterEvents()" class="filter-select">
+              <option value="all">All Categories</option>
+              <option value="sports">Sports</option>
+              <option value="teambuilding">Team Building</option>
+              <option value="corporate">Corporate</option>
+            </select>
+            <button class="btn btn-primary" onclick="showSection('add')">+ Add Event</button>
+          </div>
+        </div>
+        <div class="events-admin-list" id="adminEventsList">
+          <div style="text-align:center;padding:3rem;color:var(--ink-muted)">Loading events…</div>
+        </div>
+      </section>
+
+      <!-- Add / Edit -->
+      <section class="admin-section" id="section-add">
+        <div class="admin-header">
+          <div>
+            <h1 id="formTitle">Add New Event</h1>
+            <p id="formSubtitle">Fill in the details. The event auto-sorts as Upcoming or Past based on its date.</p>
+          </div>
+          <button class="btn-outline-dark" onclick="cancelEdit()">← Back to Events</button>
+        </div>
+
+        <div class="admin-form-card">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Event Title *</label>
+              <input type="text" id="f-title" placeholder="e.g. Intercompany Basketball Tournament 2026">
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="f-category">
+                <option value="" disabled selected>Select category</option>
+                <option value="sports">Sports</option>
+                <option value="teambuilding">Team Building</option>
+                <option value="corporate">Corporate</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date *</label>
+              <input type="date" id="f-date">
+            </div>
+            <div class="form-group">
+              <label>Start Time</label>
+              <input type="time" id="f-time">
+            </div>
+            <div class="form-group">
+              <label>End Time</label>
+              <input type="time" id="f-end_time">
+            </div>
+            <div class="form-group full">
+              <label>Location</label>
+              <input type="text" id="f-location" placeholder="e.g. Ynares Sports Arena, Pasig City">
+            </div>
+            <div class="form-group">
+              <label>Capacity / Spots</label>
+              <input type="text" id="f-spots" placeholder="e.g. 16 teams, 300 pax">
+            </div>
+            <div class="form-group">
+              <label>Cover Image URL</label>
+              <input type="url" id="f-cover_image" placeholder="https://...">
+            </div>
+            <div class="form-group full">
+              <label>Facebook Album URL <span class="label-hint">(for past events — leave blank if not yet available)</span></label>
+              <input type="url" id="f-facebook_album" placeholder="https://www.facebook.com/media/set/?set=a.xxx">
+            </div>
+            <div class="form-group full">
+              <label class="toggle-label">
+                <input type="checkbox" id="f-featured">
+                <span class="toggle-text">Mark as featured event</span>
+              </label>
+            </div>
+            <div class="form-group full">
+              <label>Description</label>
+              <textarea id="f-description" rows="5"
+                placeholder="Describe the event — format, what's included, who it's for…"></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary btn-lg" id="saveBtn" onclick="saveEvent()">Save Event</button>
+            <button class="btn-outline-dark" onclick="cancelEdit()">Cancel</button>
+            <div class="save-note" id="saveNote"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>
