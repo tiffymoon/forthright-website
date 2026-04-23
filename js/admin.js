@@ -72,13 +72,8 @@ function showLogin() {
 }
 
 function showAdmin() {
-  console.log('showAdmin called');
-  const loginScreen = document.getElementById('loginScreen');
-  const adminPanel  = document.getElementById('adminPanel');
-  console.log('loginScreen:', loginScreen);
-  console.log('adminPanel:', adminPanel);
-  if (loginScreen) loginScreen.style.display = 'none';
-  if (adminPanel)  adminPanel.style.display  = 'grid';
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminPanel').style.display  = 'grid';
   loadAndRender();
 }
 
@@ -265,31 +260,6 @@ supabase.auth.onAuthStateChange((event, session) => {
     showLogin();
   }
 });
-
-async function doLogin() {
-  const email    = document.getElementById('emailInput').value.trim();
-  const password = document.getElementById('passwordInput').value;
-  const btn      = document.getElementById('loginBtn');
-  const err      = document.getElementById('loginError');
-
-  err.classList.remove('show');
-  btn.disabled    = true;
-  btn.textContent = 'Signing in…';
-
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    err.textContent = error.message;
-    err.classList.add('show');
-    btn.disabled    = false;
-    btn.textContent = 'Sign In';
-    return;
-  }
-
-  if (data.session) {
-    showAdmin();
-  }
-}
 
 // ── Init ──────────────────────────────────────
 
