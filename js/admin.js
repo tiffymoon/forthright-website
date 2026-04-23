@@ -72,8 +72,13 @@ function showLogin() {
 }
 
 function showAdmin() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('adminPanel').style.display  = 'grid';
+  console.log('showAdmin called');
+  const loginScreen = document.getElementById('loginScreen');
+  const adminPanel  = document.getElementById('adminPanel');
+  console.log('loginScreen:', loginScreen);
+  console.log('adminPanel:', adminPanel);
+  if (loginScreen) loginScreen.style.display = 'none';
+  if (adminPanel)  adminPanel.style.display  = 'grid';
   loadAndRender();
 }
 
