@@ -131,6 +131,13 @@ nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
   line-height: 1;
   gap: 1px;
 }
+
+.logo-img {
+  height: 80px;
+  width: auto;
+  display: block;
+}
+
 .logo-main {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 1.5rem;
@@ -216,11 +223,11 @@ nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 .hero {
   position: relative;
   background: var(--green-deep);
-  min-height: 92vh;
+  height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 7rem 5% 5rem;
+  padding: 3rem 5%;
   overflow: hidden;
 }
 
