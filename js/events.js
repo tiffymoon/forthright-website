@@ -1,11 +1,11 @@
 /* ════════════════════════════════════════════
-   FORTHRIGHT EVENTS — main.js
-   Public site: reads events from Supabase.
+   FORTHRIGHT EVENTS — events.js
+   Full events page: upcoming + past tabs
    ════════════════════════════════════════════ */
 
-const MONTHS       = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const MONTHS_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const CAT_LABELS   = { sports: 'Sports', teambuilding: 'Team Building', corporate: 'Corporate' };
+const MONTHS      = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const CAT_LABELS  = { sports: 'Sports', teambuilding: 'Team Building', corporate: 'Corporate' };
 
 function parseLocalDate(dateStr) {
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -26,22 +26,20 @@ function formatTime(t) {
   if (!t) return '';
   const [h, m] = t.split(':').map(Number);
   const ampm = h >= 12 ? 'PM' : 'AM';
-  const h12  = h % 12 || 12;
-  return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+  return `${h % 12 || 12}:${String(m).padStart(2,'0')} ${ampm}`;
 }
+
+// ── Nav ───────────────────────────────────────
 
 window.addEventListener('scroll', () => {
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
 });
 
-function scrollToTop(e) {
-  e.preventDefault();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
 function toggleMenu() {
   document.getElementById('mobileMenu').classList.toggle('open');
 }
+
+// ── Tabs ──────────────────────────────────────
 
 function switchTab(which) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -50,14 +48,25 @@ function switchTab(which) {
   document.getElementById('panel-' + which).classList.add('active');
 }
 
+// Check if URL has ?tab=past
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('tab') === 'past') switchTab('past');
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+});
+
+// ── Load Events ───────────────────────────────
+
 async function loadEvents() {
   const { data, error } = await supabase
     .from('events')
     .select('*')
     .order('date', { ascending: true });
-  if (error) { console.error('Error loading events:', error.message); return []; }
+  if (error) { console.error(error.message); return []; }
   return data || [];
 }
+
+// ── Calendar Strip ────────────────────────────
 
 function buildCalendar(events) {
   const byMonth = {};
@@ -67,8 +76,11 @@ function buildCalendar(events) {
     if (!byMonth[key]) byMonth[key] = { label: `${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`, events: [] };
     byMonth[key].events.push(ev);
   });
+
   const strip = document.getElementById('calendarStrip');
   strip.innerHTML = '';
+  if (!Object.keys(byMonth).length) return;
+
   Object.values(byMonth).forEach(month => {
     const block = document.createElement('div');
     block.className = 'cal-month';
@@ -92,6 +104,8 @@ function buildCalendar(events) {
     strip.appendChild(block);
   });
 }
+
+// ── Upcoming Cards ────────────────────────────
 
 function renderUpcoming(events) {
   const grid = document.getElementById('upcomingGrid');
@@ -127,6 +141,8 @@ function renderUpcoming(events) {
   }).join('');
 }
 
+// ── Past Events ───────────────────────────────
+
 function renderPast(events) {
   const grid = document.getElementById('pastGrid');
   if (!events.length) {
@@ -151,17 +167,13 @@ function renderPast(events) {
   }).join('');
 }
 
-function submitForm(e) {
-  e.preventDefault();
-  document.getElementById('formSuccess').style.display = 'block';
-  e.target.reset();
-  setTimeout(() => { document.getElementById('formSuccess').style.display = 'none'; }, 5000);
-}
-
-document.getElementById('footerYear').textContent = new Date().getFullYear();
+// ── Init ──────────────────────────────────────
 
 (async () => {
   const all      = await loadEvents();
-  const upcoming = all.filter(isUpcoming).slice(0, 3);
+  const upcoming = all.filter(isUpcoming);
+  const past     = all.filter(ev => !isUpcoming(ev)).reverse();
+  buildCalendar(upcoming);
   renderUpcoming(upcoming);
+  renderPast(past);
 })();

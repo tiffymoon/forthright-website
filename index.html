@@ -14,14 +14,15 @@
   <!-- NAV -->
   <nav id="navbar">
     <a href="#" class="logo" onclick="scrollToTop(event)">
-      <img src="images/forthright-logo.jpeg" alt="Forthright Events Management" class="logo-img">
+      <img src="images/logo_forthright.png" alt="Forthright Events Management" class="logo-img">
     </a>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#services">Services</a></li>
-      <li><a href="#events">Events</a></li>
+      <li><a href="events.html">Events</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <a href="admin/" class="nav-admin" title="Admin">⚙</a>
     <button class="burger" id="burger" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -29,7 +30,7 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="#about" onclick="toggleMenu()">About</a>
     <a href="#services" onclick="toggleMenu()">Services</a>
-    <a href="#events" onclick="toggleMenu()">Events</a>
+    <a href="events.html">Events</a>
     <a href="#contact" onclick="toggleMenu()">Contact</a>
   </div>
 
@@ -42,13 +43,14 @@
     <div class="hero-content">
       <p class="hero-eyebrow">Sports · Corporate · Team Building</p>
       <h1 class="hero-title">
-        We make events<br>
-        <em>happen</em>
+        We Make<br>
+        <em>Events</em><br>
+        Happen.
       </h1>
-      <p class="hero-body">From intercompany tournaments to gala nights, Forthright brings the energy, the logistics, and the finishing touch.</p>
+      <p class="hero-body">From intercompany tournaments to gala nights — Forthright brings the energy, the logistics, and the finishing touch.</p>
       <div class="hero-actions">
         <a href="#events" class="btn btn-primary">View Events</a>
-        <a href="#contact" class="btn btn-outline">Contact Us</a>
+        <a href="#contact" class="btn btn-outline">Get a Quote</a>
       </div>
     </div>
     <div class="hero-stats">
@@ -123,31 +125,36 @@
     </div>
   </section>
 
-  <!-- EVENTS -->
+  <!-- CLIENTS -->
+  <section class="clients-section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Trusted By</p>
+        <h2>Companies That <em class="dark">Play Hard</em></h2>
+      </div>
+      <div class="clients-grid">
+        <div class="client-logo"><div class="client-placeholder">Company Logo</div></div>
+        <div class="client-logo"><div class="client-placeholder">Company Logo</div></div>
+        <div class="client-logo"><div class="client-placeholder">Company Logo</div></div>
+        <div class="client-logo"><div class="client-placeholder">Company Logo</div></div>
+        <div class="client-logo"><div class="client-placeholder">Company Logo</div></div>
+        <div class="client-logo"><div class="client-placeholder">Company Logo</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UPCOMING EVENTS PREVIEW -->
   <section class="events-section" id="events">
     <div class="container">
       <div class="section-header">
         <p class="section-tag">Events</p>
-        <h2>Upcoming &amp; <em>Past</em></h2>
+        <h2>Upcoming <em class="dark">Events</em></h2>
       </div>
-      <div class="events-tabs">
-        <button class="tab-btn active" id="tab-upcoming" onclick="switchTab('upcoming')">Upcoming Events</button>
-        <button class="tab-btn" id="tab-past" onclick="switchTab('past')">Past Events</button>
+      <div class="events-grid" id="upcomingGrid">
+        <div class="events-loading">Loading events…</div>
       </div>
-
-      <!-- Upcoming Tab -->
-      <div class="tab-panel active" id="panel-upcoming">
-        <div class="calendar-strip" id="calendarStrip"></div>
-        <div class="events-grid" id="upcomingGrid">
-          <div class="events-loading">Loading events…</div>
-        </div>
-      </div>
-
-      <!-- Past Tab -->
-      <div class="tab-panel" id="panel-past">
-        <div class="past-grid" id="pastGrid">
-          <div class="events-loading">Loading events…</div>
-        </div>
+      <div class="events-view-all">
+        <a href="events.html" class="btn btn-primary btn-lg">View All Events</a>
       </div>
     </div>
   </section>

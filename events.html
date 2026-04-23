@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events — Forthright Events Management</title>
+  <meta name="description" content="Browse upcoming sports and corporate events managed by Forthright, and view photo galleries from past events.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="index.html" class="logo">
+      <img src="images/logo_forthright.png" alt="Forthright Events Management" class="logo-img">
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="events.html" class="nav-active">Events</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <button class="burger" id="burger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#about">About</a>
+    <a href="index.html#services">Services</a>
+    <a href="events.html">Events</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+
+  <!-- PAGE HEADER -->
+  <section class="page-header">
+    <div class="container">
+      <p class="section-tag">What's On</p>
+      <h1>Events</h1>
+      <p>Browse our upcoming events and relive past ones through our photo galleries.</p>
+    </div>
+  </section>
+
+  <!-- EVENTS -->
+  <section class="events-section" id="events">
+    <div class="container">
+      <div class="events-tabs">
+        <button class="tab-btn active" id="tab-upcoming" onclick="switchTab('upcoming')">Upcoming Events</button>
+        <button class="tab-btn" id="tab-past" onclick="switchTab('past')">Past Events</button>
+      </div>
+
+      <!-- Upcoming Tab -->
+      <div class="tab-panel active" id="panel-upcoming">
+        <div class="calendar-strip" id="calendarStrip"></div>
+        <div class="events-grid" id="upcomingGrid">
+          <div class="events-loading">Loading events…</div>
+        </div>
+      </div>
+
+      <!-- Past Tab -->
+      <div class="tab-panel" id="panel-past">
+        <div class="past-grid" id="pastGrid">
+          <div class="events-loading">Loading events…</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band">
+    <div class="container">
+      <h2>Want us to run your next event?</h2>
+      <p>Get in touch and we'll put together a proposal.</p>
+      <a href="index.html#contact" class="btn btn-primary btn-lg">Get in Touch</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <span class="logo-main">FORTHRIGHT</span>
+          <span class="logo-sub">Events Management</span>
+        </div>
+        <p class="footer-copy">© <span id="footerYear"></span> Forthright Events Management. All rights reserved.</p>
+        <a href="admin/" class="footer-admin">Admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/events.js"></script>
+</body>
+</html>

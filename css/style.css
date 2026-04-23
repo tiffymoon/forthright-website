@@ -131,17 +131,10 @@ nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
   line-height: 1;
   gap: 1px;
 }
-
 .logo-img {
-  height: auto;
-  width: 320px;
+  height: 80px;
+  width: auto;
   display: block;
-}
-
-@media (max-width: 680px) {
-  .logo-img {
-    width: 180px;
-  }
 }
 
 .logo-main {
@@ -229,11 +222,11 @@ nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 .hero {
   position: relative;
   background: var(--green-deep);
-  min-height: calc(100vh - 120px);
+  height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 4rem 5% 3rem;
+  padding: 3rem 5%;
   overflow: hidden;
 }
 
@@ -274,7 +267,7 @@ nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
   margin-bottom: 1.2rem;
 }
 .hero-title {
-  font-size: clamp(3rem, 7vw, 6rem);
+  font-size: clamp(4rem, 10vw, 8rem);
   color: var(--white);
   line-height: 0.92;
   margin-bottom: 1.5rem;
@@ -480,6 +473,82 @@ nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
   padding: 0.3rem 0.7rem;
   border-radius: 20px;
   border: 1px solid rgba(246,201,14,0.25);
+}
+
+/* ── CLIENTS ── */
+.clients-section {
+  padding: 6rem 0;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+}
+.clients-section .section-tag { color: var(--green-main); }
+
+.clients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.5rem;
+  align-items: center;
+}
+.client-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.2s;
+  min-height: 90px;
+}
+.client-logo:hover {
+  border-color: var(--green-light);
+  box-shadow: var(--shadow);
+}
+.client-logo img {
+  max-height: 50px;
+  width: auto;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+.client-logo:hover img { filter: grayscale(0%); opacity: 1; }
+.client-placeholder {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--border);
+  text-align: center;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--green-deep);
+  padding: 5rem 0 4rem;
+  border-bottom: 3px solid var(--yellow);
+}
+.page-header .section-tag { color: var(--yellow); }
+.page-header h1 {
+  font-size: clamp(3rem, 8vw, 6rem);
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+.page-header p {
+  color: rgba(249,250,247,0.65);
+  font-size: 1rem;
+  max-width: 500px;
+}
+
+/* ── VIEW ALL LINK ── */
+.events-view-all {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+/* ── ACTIVE NAV LINK ── */
+.nav-active {
+  color: var(--green-main) !important;
+  font-weight: 700 !important;
 }
 
 /* ── EVENTS SECTION ── */
