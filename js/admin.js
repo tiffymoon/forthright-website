@@ -240,6 +240,14 @@ function cancelEdit() {
   showSection('events');
 }
 
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    showAdmin();
+  } else {
+    showLogin();
+  }
+});
+
 // ── Init ──────────────────────────────────────
 
 window.addEventListener('DOMContentLoaded', async () => {
