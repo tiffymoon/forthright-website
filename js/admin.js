@@ -261,6 +261,31 @@ supabase.auth.onAuthStateChange((event, session) => {
   }
 });
 
+async function doLogin() {
+  const email    = document.getElementById('emailInput').value.trim();
+  const password = document.getElementById('passwordInput').value;
+  const btn      = document.getElementById('loginBtn');
+  const err      = document.getElementById('loginError');
+
+  err.classList.remove('show');
+  btn.disabled    = true;
+  btn.textContent = 'Signing in…';
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    err.textContent = error.message;
+    err.classList.add('show');
+    btn.disabled    = false;
+    btn.textContent = 'Sign In';
+    return;
+  }
+
+  if (data.session) {
+    showAdmin();
+  }
+}
+
 // ── Init ──────────────────────────────────────
 
 window.addEventListener('DOMContentLoaded', async () => {

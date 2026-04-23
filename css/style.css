@@ -133,9 +133,15 @@ nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 }
 
 .logo-img {
-  height: 80px;
-  width: auto;
+  height: auto;
+  width: 320px;
   display: block;
+}
+
+@media (max-width: 680px) {
+  .logo-img {
+    width: 180px;
+  }
 }
 
 .logo-main {
@@ -223,11 +229,11 @@ nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 .hero {
   position: relative;
   background: var(--green-deep);
-  height: calc(100vh - 120px);
+  min-height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 3rem 5%;
+  padding: 4rem 5% 3rem;
   overflow: hidden;
 }
 
@@ -268,7 +274,7 @@ nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
   margin-bottom: 1.2rem;
 }
 .hero-title {
-  font-size: clamp(4rem, 10vw, 8rem);
+  font-size: clamp(3rem, 7vw, 6rem);
   color: var(--white);
   line-height: 0.92;
   margin-bottom: 1.5rem;

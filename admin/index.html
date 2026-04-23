@@ -168,7 +168,17 @@
   <div class="toast" id="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../js/supabase-config.js"></script>
-  <script src="../js/admin.js"></script>
+<script>
+  window.addEventListener('load', function() {
+    var s1 = document.createElement('script');
+    s1.src = '../js/supabase-config.js';
+    s1.onload = function() {
+      var s2 = document.createElement('script');
+      s2.src = '../js/admin.js';
+      document.body.appendChild(s2);
+    };
+    document.body.appendChild(s1);
+  });
+</script>
 </body>
 </html>
