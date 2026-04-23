@@ -3,8 +3,7 @@
    Auth via Supabase. RLS protects all writes.
    ════════════════════════════════════════════ */
 
-const STORAGE_KEY = 'forthright_events';
-const CAT_LABELS  = { sports: 'Sports', teambuilding: 'Team Building', corporate: 'Corporate' };
+const CAT_LABELS   = { sports: 'Sports', teambuilding: 'Team Building', corporate: 'Corporate' };
 const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 let events    = [];
@@ -16,13 +15,6 @@ function isUpcoming(ev) {
   const today = new Date(); today.setHours(0,0,0,0);
   const [y,m,d] = ev.date.split('-').map(Number);
   return new Date(y, m-1, d) >= today;
-}
-
-function formatTime(t) {
-  if (!t) return '';
-  const [h, m] = t.split(':').map(Number);
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  return `${h % 12 || 12}:${String(m).padStart(2,'0')} ${ampm}`;
 }
 
 function showToast(msg, bg) {
@@ -50,20 +42,24 @@ async function doLogin() {
   btn.disabled    = true;
   btn.textContent = 'Signing in…';
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     err.textContent = error.message;
     err.classList.add('show');
     btn.disabled    = false;
     btn.textContent = 'Sign In';
+    return;
   }
-  // On success, onAuthStateChange fires and calls showAdmin()
+
+  if (data.session) {
+    showAdmin();
+  }
 }
 
 async function doLogout() {
   await supabase.auth.signOut();
-  // onAuthStateChange fires and reloads to login
+  showLogin();
 }
 
 function showLogin() {
@@ -85,7 +81,7 @@ async function loadAndRender() {
     .select('*')
     .order('date', { ascending: true });
 
-  if (error) { showToast('Error loading events: ' + error.message, '#c0392b'); return; }
+  if (error) { showToast('Error: ' + error.message, '#c0392b'); return; }
   events = data || [];
   renderAdminList();
 }
@@ -202,18 +198,17 @@ async function saveEvent() {
     title,
     category,
     date,
-    time:           document.getElementById('f-time').value          || null,
-    end_time:       document.getElementById('f-end_time').value      || null,
-    location:       document.getElementById('f-location').value.trim()       || null,
-    spots:          document.getElementById('f-spots').value.trim()          || null,
-    cover_image:    document.getElementById('f-cover_image').value.trim()    || null,
+    time:           document.getElementById('f-time').value               || null,
+    end_time:       document.getElementById('f-end_time').value           || null,
+    location:       document.getElementById('f-location').value.trim()    || null,
+    spots:          document.getElementById('f-spots').value.trim()       || null,
+    cover_image:    document.getElementById('f-cover_image').value.trim() || null,
     facebook_album: document.getElementById('f-facebook_album').value.trim() || null,
-    description:    document.getElementById('f-description').value.trim()    || null,
+    description:    document.getElementById('f-description').value.trim() || null,
     featured:       document.getElementById('f-featured').checked,
   };
 
   let error;
-
   if (editingId) {
     ({ error } = await supabase.from('events').update(payload).eq('id', editingId));
   } else {
@@ -222,10 +217,7 @@ async function saveEvent() {
 
   setLoading(saveBtn, false);
 
-  if (error) {
-    showToast('Error: ' + error.message, '#c0392b');
-    return;
-  }
+  if (error) { showToast('Error: ' + error.message, '#c0392b'); return; }
 
   showToast(editingId ? '✅ Event updated!' : '✅ Event added!');
   editingId = null;
@@ -236,11 +228,8 @@ async function saveEvent() {
 
 async function deleteEvent(id) {
   if (!confirm('Delete this event? This cannot be undone.')) return;
-
   const { error } = await supabase.from('events').delete().eq('id', id);
-
   if (error) { showToast('Error: ' + error.message, '#c0392b'); return; }
-
   showToast('🗑 Event deleted.');
   await loadAndRender();
 }
@@ -251,20 +240,9 @@ function cancelEdit() {
   showSection('events');
 }
 
-// ── Auth State Listener ───────────────────────
-
-supabase.auth.onAuthStateChange((event, session) => {
-  if (session) {
-    showAdmin();
-  } else {
-    showLogin();
-  }
-});
-
 // ── Init ──────────────────────────────────────
 
 window.addEventListener('DOMContentLoaded', async () => {
-  // Check if already logged in
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
     showAdmin();
@@ -272,7 +250,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     showLogin();
   }
 
-  // Enter key on login form
   document.getElementById('passwordInput')
     .addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('emailInput')
