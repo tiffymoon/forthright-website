@@ -16,7 +16,8 @@
   </a>
   
   <ul class="nav-links" id="nav-menu">
-    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#about">Who we are</a></li>
     <li><a href="index.html#services">Services</a></li>
     <li><a href="events.html" class="nav-active">Events</a></li>
     <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
@@ -34,7 +35,6 @@
         <div class="section-eyebrow" style="color:rgba(255,255,255,.55)">Events Calendar</div>
         <h1 class="page-header-title">All Events</h1>
       </div>
-      <a href="index.html" class="btn-outline" style="font-size:.85rem;padding:.55rem 1.2rem;">← Back to Home</a>
     </div>
   </div>
 </div>
@@ -53,11 +53,27 @@
     </div>
 
     <div id="past-panel" class="tab-panel">
-      <div class="filter-bar">
-        <input type="text" id="filter-name" placeholder="Search by name…" oninput="filterPastEvents()">
-        <input type="text" id="filter-date" placeholder="e.g. 2025 or May 2025" oninput="filterPastEvents()">
+      <!-- <div class="filter-bar">
+        <select id="filter-year" onchange="filterPastEvents()">
+          <option value="">All Years</option>
+        </select>
+        <select id="filter-month" onchange="filterPastEvents()">
+          <option value="">All Months</option>
+          <option value="0">January</option>
+          <option value="1">February</option>
+          <option value="2">March</option>
+          <option value="3">April</option>
+          <option value="4">May</option>
+          <option value="5">June</option>
+          <option value="6">July</option>
+          <option value="7">August</option>
+          <option value="8">September</option>
+          <option value="9">October</option>
+          <option value="10">November</option>
+          <option value="11">December</option>
+        </select>
         <button class="btn-clear-filter" onclick="clearFilters()">Clear</button>
-      </div>
+      </div> -->
       <div class="events-grid" id="past-grid"><p class="loading-msg">Loading…</p></div>
       <div class="empty-state" id="past-empty">No past events recorded yet.</div>
     </div>
