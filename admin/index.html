@@ -12,7 +12,9 @@
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <div class="login-logo-icon">🏆</div>
+      <div class="login-logo-icon">
+        <img src="../images/logo.png" alt="Forthright Events" style="height:36px;width:auto;">
+      </div>
       <h1>Forthright Events</h1>
       <p>Admin Panel</p>
     </div>
@@ -29,8 +31,13 @@
 <div id="app">
 
   <nav class="admin-nav">
-    <div class="admin-nav-logo"><span>🏆</span> Forthright Admin</div>
+    <div class="admin-nav-logo">
+      <img src="../images/forthright-icon.png" alt="Forthright Events" style="height:36px;width:auto;">
+      Forthright Admin
+    </div>
     <div class="admin-nav-right">
+      <a href="#" onclick="switchTab('events', this); return false;">Events</a>
+      <a href="#" onclick="switchTab('clients', this); return false;">Clients</a>
       <a href="../index.html" target="_blank">View Site ↗</a>
       <button id="logout-btn" onclick="logout()">Sign Out</button>
     </div>
@@ -38,7 +45,10 @@
 
   <main class="admin-main">
 
-    <!-- ══ EVENTS ══ -->
+
+
+  <!-- EVENTS TAB -->
+  <div id="tab-events">
     <section class="admin-section">
       <div class="admin-section-header">
         <h2>Events</h2>
@@ -46,144 +56,151 @@
       </div>
       <div class="table-wrap">
         <table class="events-table">
-          <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="events-tbody"><tr><td colspan="5" class="loading-cell">Loading…</td></tr></tbody>
+          <thead>
+            <tr>
+              <th onclick="sortEvents('title')">Title <span class="sort-icon" id="sort-title">↕</span></th>
+              <th onclick="sortEvents('clients')">Client <span class="sort-icon" id="sort-clients">↕</span></th>
+              <th onclick="sortEvents('category')">Category <span class="sort-icon" id="sort-category">↕</span></th>
+              <th onclick="sortEvents('event_date')">Date <span class="sort-icon" id="sort-event_date">↕</span></th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="events-tbody"><tr><td colspan="6" class="loading-cell">Loading…</td></tr></tbody>
         </table>
       </div>
     </section>
+  </div>
 
-    <!-- Event Form -->
-    <section class="admin-section" id="form-section" style="display:none;">
-      <div class="form-card">
-        <div class="form-card-header">
-          <h3 id="form-title">Add New Event</h3>
-        </div>
-        <div class="form-card-body">
-          <div class="form-grid">
-            <div class="form-group full">
-              <label>Event Title *</label>
-              <input type="text" id="f-title" placeholder="e.g. PLDT Annual Badminton Cup 2025">
-            </div>
-            <div class="form-group">
-              <label>Category *</label>
-              <select id="f-category">
-                <option value="">— Select —</option>
-                <option>Badminton</option>
-                <option>Basketball</option>
-                <option>Volleyball</option>
-                <option>Football</option>
-                <option>Flag Football</option>
-                <option>Bowling</option>
-                <option>Team Building</option>
-                <option>Corporate Event</option>
-                <option>Social</option>
-              </select>
-            </div>
-           <div class="form-group">
-              <label>Client</label>
-              <select id="f-client_id">
-                <option value="">— No client —</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Date *</label>
-              <input type="date" id="f-event_date">
-            </div>
-            <div class="form-group">
-              <label>Time</label>
-              <input type="text" id="f-event_time" placeholder="e.g. 8:00 AM – 5:00 PM">
-            </div>
-            <div class="form-group">
-              <label>Price / Registration Fee</label>
-              <input type="text" id="f-price" placeholder="e.g. ₱1,500 per team">
-            </div>
-            <div class="form-group full">
-              <label>Venue</label>
-              <input type="text" id="f-location" placeholder="e.g. Ynares Sports Arena, Pasig City">
-            </div>
-            <div class="form-group">
-              <label>Capacity / Spots</label>
-              <input type="text" id="f-spots" placeholder="e.g. 16 teams, 300 pax">
-            </div>
-            <div class="form-group">
-              <label>Cover Image URL</label>
-              <input type="url" id="f-cover_image" placeholder="https://…">
-            </div>
-            <div class="form-group full" id="album-field-row" style="display:none;">
-              <label>Photo Album URL <span class="label-hint">(Facebook album — only shown for past events)</span></label>
-              <input type="url" id="f-facebook_album" placeholder="https://www.facebook.com/media/set/…">
-            </div>
-            <div class="form-group full">
-              <label class="toggle-label">
-                <input type="checkbox" id="f-featured">
-                <span class="toggle-text">Mark as featured event</span>
-              </label>
-            </div>
-            <div class="form-group full">
-              <label>Description</label>
-              <textarea id="f-description" rows="5" placeholder="Describe the event — format, what's included, who it's for…"></textarea>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button class="btn-primary" id="saveBtn" onclick="saveEvent()">Save Event</button>
-            <button class="btn-outline-dark" onclick="cancelEdit()">Cancel</button>
-            <div class="save-note" id="saveNote"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ CLIENTS ══ -->
-    <section class="admin-section" style="margin-top:3rem;">
+  <!-- CLIENTS TAB -->
+  <div id="tab-clients" style="display:none;">
+    <section class="admin-section">
       <div class="admin-section-header">
         <h2>Clients</h2>
         <button class="btn-add" onclick="openClientForm()">+ Add Client</button>
       </div>
-      <p class="section-hint">Check the "Featured" checkbox to show a client's logo on the homepage.</p>
+      <p class="section-hint">Check "Featured" to show a client's logo on the homepage.</p>
       <div class="table-wrap">
         <table class="events-table">
-          <thead><tr><th>Name</th><th>Logo Preview</th><tr><th>Client</th><th>Featured on Homepage</th><th>Actions</th></tr></thead>
-          <tbody id="clients-tbody"><tr><td colspan="4" class="loading-cell">Loading…</td></tr></tbody>
+          <thead><tr><th>Name</th><th>Logo</th><th>Featured</th><th>Actions</th></tr></thead>
+          <tbody id="clients-tbody"><tr><td colspan="6" class="loading-cell">Loading…</td></tr></tbody>
         </table>
       </div>
     </section>
 
-    <!-- Client Form -->
-    <section class="admin-section" id="client-form-section" style="display:none;">
-      <div class="form-card">
-        <div class="form-card-header">
-          <h3 id="client-form-title">Add Client</h3>
-        </div>
-        <div class="form-card-body">
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Client Name *</label>
-              <input type="text" id="fc-name" placeholder="e.g. PLDT">
-            </div>
-            <div class="form-group">
-              <label>Sort Order <span class="label-hint">(lower = appears first)</span></label>
-              <input type="number" id="fc-sort_order" placeholder="0" min="0">
-            </div>
-            <div class="form-group full">
-              <label>Logo URL <span class="label-hint">(paste a direct link to the logo image)</span></label>
-              <input type="url" id="fc-logo_url" placeholder="https://…">
-            </div>
-            <div class="form-group full">
-              <label class="toggle-label">
-                <input type="checkbox" id="fc-featured" checked>
-                <span class="toggle-text">Show on homepage</span>
-              </label>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button class="btn-primary" id="saveClientBtn" onclick="saveClient()">Save Client</button>
-            <button class="btn-outline-dark" onclick="cancelClientEdit()">Cancel</button>
-          </div>
+  </div>
+
+</main>
+
+<!-- OVERLAY -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeAllDrawers()"></div>
+
+<!-- EVENT DRAWER -->
+<div class="drawer" id="event-drawer">
+  <div class="drawer-header">
+    <h3 id="form-title">Add New Event</h3>
+    <button class="drawer-close" onclick="cancelEdit()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Event Title *</label>
+        <input type="text" id="f-title" placeholder="e.g. PLDT Annual Badminton Cup 2025">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="f-category">
+          <option value="">— Select —</option>
+          <option>Sports Tournament</option>
+          <option>Team Building</option>
+          <option>Events & Celebrations</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Client</label>
+        <select id="f-client_id">
+          <option value="">— No client —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Start Date *</label>
+        <input type="date" id="f-event_date">
+      </div>
+      <div class="form-group">
+        <label>End Date <span class="label-hint">(leave blank if single day)</span></label>
+        <input type="date" id="f-end_date">
+      </div>
+      <div class="form-group full">
+        <label>Venue</label>
+        <input type="text" id="f-location" placeholder="e.g. Ynares Sports Arena, Pasig City">
+      </div>
+      <div class="form-group full">
+        <label>Google Maps URL <span class="label-hint">(optional)</span></label>
+        <input type="url" id="f-location_url" placeholder="https://maps.google.com/…">
+      </div>
+      <div class="form-group full">
+        <label>Cover Image</label>
+        <input type="file" id="f-cover_image_file" accept="image/*">
+        <input type="hidden" id="f-cover_image">
+        <div id="cover-preview" style="margin-top:.75rem;display:none;">
+          <img id="cover-preview-img" style="height:120px;border-radius:8px;object-fit:cover;">
         </div>
       </div>
-    </section>
+      <div class="form-group full" id="album-field-row" style="display:none;">
+        <label>Photo Album URL <span class="label-hint">(past events only)</span></label>
+        <input type="url" id="f-facebook_album" placeholder="https://www.facebook.com/media/set/…">
+      </div>
+      <div class="form-group full">
+        <label>Description</label>
+        <textarea id="f-description" rows="5" placeholder="Describe the event…"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-primary" id="saveBtn" onclick="saveEvent()">Save Event</button>
+    <button class="btn-outline-dark" onclick="cancelEdit()">Cancel</button>
+    <div class="save-note" id="saveNote"></div>
+  </div>
+</div>
 
-  </main>
+<!-- CLIENT DRAWER -->
+<div class="drawer" id="client-drawer">
+  <div class="drawer-header">
+    <h3 id="client-form-title">Add Client</h3>
+    <button class="drawer-close" onclick="cancelClientEdit()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Client Name *</label>
+        <input type="text" id="fc-name" placeholder="e.g. PLDT">
+      </div>
+      <div class="form-group">
+        <label>Sort Order <span class="label-hint">(lower = appears first)</span></label>
+        <input type="number" id="fc-sort_order" placeholder="0" min="0">
+      </div>
+      <div class="form-group full">
+        <label>Logo</label>
+        <input type="file" id="fc-logo_file" accept="image/*">
+        <input type="hidden" id="fc-logo_url">
+        <div id="logo-preview" style="margin-top:.75rem;display:none;">
+          <img id="logo-preview-img" style="height:48px;object-fit:contain;">
+        </div>
+      </div>
+      <div class="form-group full">
+        <label class="toggle-label">
+          <input type="checkbox" id="fc-featured" checked>
+          <span class="toggle-text">Show on homepage</span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-primary" id="saveClientBtn" onclick="saveClient()">Save Client</button>
+    <button class="btn-outline-dark" onclick="cancelClientEdit()">Cancel</button>
+  </div>
+</div>
+
 </div>
 
 <div class="toast" id="toast"></div>
