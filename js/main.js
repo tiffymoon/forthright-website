@@ -57,12 +57,24 @@ async function loadEvents() {
   } else {
     if (pastEmpty) pastEmpty.style.display = 'none';
     allPastEvents = past;
+    populateYearFilter(allPastEvents);
 renderPastEvents(past);
   }
 }
 
+function populateYearFilter(events) {
+  const select = document.getElementById('filter-year');
+  if (!select) return;
+  const years = [...new Set(events.map(e => new Date(e.event_date + 'T00:00:00').getFullYear()))].sort((a,b) => b - a);
+  years.forEach(y => {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    select.appendChild(opt);
+  });
+}
+
 function renderPastEvents(events) {
-  const pastGrid = document.getElementById('past-grid');
+  const pastGrid  = document.getElementById('past-grid');
   const pastEmpty = document.getElementById('past-empty');
   if (!pastGrid) return;
   pastGrid.innerHTML = '';
@@ -75,24 +87,23 @@ function renderPastEvents(events) {
 }
 
 function filterPastEvents() {
-  const name     = document.getElementById('filter-name')?.value.toLowerCase() || '';
-  const date     = document.getElementById('filter-date')?.value.toLowerCase() || '';
+  const year  = document.getElementById('filter-year')?.value;
+  const month = document.getElementById('filter-month')?.value;
 
   const filtered = allPastEvents.filter(e => {
-    const matchName     = e.title.toLowerCase().includes(name);
-    const dateStr       = new Date(e.event_date + 'T00:00:00').toLocaleDateString('en-US', {
-      month: 'long', year: 'numeric', day: 'numeric'
-    }).toLowerCase();
-    const matchDate = !date || dateStr.includes(date);
-    return matchName && matchDate && matchCategory;
+    const d = new Date(e.event_date + 'T00:00:00');
+    const matchName  = e.title.toLowerCase().includes(name);
+    const matchYear  = !year  || d.getFullYear() == year;
+    const matchMonth = !month || d.getMonth() == month;
+    return matchName && matchYear && matchMonth;
   });
 
   renderPastEvents(filtered);
 }
 
 function clearFilters() {
-  document.getElementById('filter-name').value = '';
-  document.getElementById('filter-date').value = '';
+  document.getElementById('filter-year').value  = '';
+  document.getElementById('filter-month').value = '';
   renderPastEvents(allPastEvents);
 }
 
@@ -105,17 +116,21 @@ function eventListCard(e) {
         month: 'long', day: 'numeric', year: 'numeric'
       })
     : '';
-  const logo = (e.clients && e.clients.logo_url) ? e.clients.logo_url : 'images/forthright-icon.png';
+
+  const clientName = e.clients ? e.clients.name : '';
+  const firstLetter = e.title.charAt(0).toUpperCase();
+  const avatarColor = stringToColor(e.title);
+  const logoHtml = (e.clients && e.clients.logo_url)
+    ? `<img src="${e.clients.logo_url}" alt="${clientName}">`
+    : `<div class="elc-avatar" style="background:${avatarColor}">${firstLetter}</div>`;
 
   return `
     <div class="event-list-card">
-      <div class="elc-logo">
-        <img src="${logo}" alt="">
-      </div>
+      <div class="elc-logo">${logoHtml}</div>
       <div class="elc-body">
         <h3 class="elc-title">${e.title}</h3>
-        <p class="elc-meta">📅 ${dateStr}${endDate}</p>
-        ${e.location ? `<p class="elc-meta">📍 ${e.location}</p>${e.location_url ? `<p class="elc-meta"><a href="${e.location_url}" target="_blank" class="directions-link">Directions →</a></p>` : ''}` : ''}
+        <p class="elc-meta">${dateStr}${endDate}</p>
+        ${e.location ? `<p class="elc-meta">${e.location}</p>${e.location_url ? `<p class="elc-meta"><a href="${e.location_url}" target="_blank" class="directions-link">(How to get there)</a></p>` : ''}` : ''}
       </div>
     </div>`;
 }
@@ -142,20 +157,33 @@ function groupedUpcomingHTML(events) {
                 month: 'short', day: 'numeric'
               })
             : '';
-          const logo = (e.clients && e.clients.logo_url) ? e.clients.logo_url : 'images/forthright-icon.png';
+          const clientName = e.clients ? e.clients.name : '';
+          const firstLetter = e.title.charAt(0).toUpperCase();
+          const avatarColor = stringToColor(e.title);
+          const logoHtml = (e.clients && e.clients.logo_url)
+            ? `<img src="${e.clients.logo_url}" alt="${clientName}">`
+            : `<div class="event-row-avatar" style="background:${avatarColor}">${firstLetter}</div>`;
           return `
             <div class="event-row">
-              <div class="event-row-logo">
-                <img src="${logo}" alt="">
-              </div>
+              <div class="event-row-logo">${logoHtml}</div>
               <div class="event-row-title">${e.title}</div>
-              <div class="event-row-date">📅 ${startDate}${endDate}</div>
-              <div class="event-row-venue">${e.location ? `📍 ${e.location}` : ''}${e.location_url ? ` <a href="${e.location_url}" target="_blank" class="directions-link">Directions →</a>` : ''}</div>
+              <div class="event-row-date">${startDate}${endDate}</div>
+              <div class="event-row-venue">${e.location || ''}${e.location_url ? `<br><a href="${e.location_url}" target="_blank" class="directions-link">(How to get there)</a>` : ''}</div>
             </div>`;
         }).join('')}
       </div>
     </div>`
   ).join('');
+}
+
+function stringToColor(str) {
+  const colors = [
+    '#2e7d52', '#1565c0', '#6a1b9a', '#c62828',
+    '#e65100', '#00695c', '#4527a0', '#ad1457'
+  ];
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
 }
 
 async function loadClients() {
@@ -197,7 +225,7 @@ function eventCard(e, isPast) {
     const cover = `<div class="card-img ${isPlaceholder ? 'card-img--muted' : ''}" style="background-image:url('${coverImg}');background-size:${isPlaceholder ? 'contain' : 'cover'};background-repeat:no-repeat;background-position:center;background-color:#f0f0f0;"></div>`;
 
   const albumBtn = isPast && e.facebook_album
-    ? `<a href="${e.facebook_album}" target="_blank" class="btn-album">📸 View Photos</a>`
+    ? `<a href="${e.facebook_album}" target="_blank" class="btn-album">View Photos</a>`
     : '';
 
   return `
@@ -205,8 +233,8 @@ function eventCard(e, isPast) {
       ${cover}
       <div class="card-body">
         <h3 class="card-title">${e.title}</h3>
-        <p class="card-date">📅 ${dateStr}${e.event_time ? ' · ' + e.event_time : ''}</p>
-        ${e.location ? `<p class="card-location">📍 ${e.location}${e.location_url ? ` <a href="${e.location_url}" target="_blank" class="directions-link">Directions →</a>` : ''}</p>` : ''}
+        <p class="card-date">${dateStr}${e.event_time ? ' · ' + e.event_time : ''}</p>
+        ${e.location ? `<p class="card-location">${e.location}${e.location_url ? ` <a href="${e.location_url}" target="_blank" class="directions-link">(How to get there)</a>` : ''}</p>` : ''}
         ${albumBtn}
       </div>
     </div>`;
