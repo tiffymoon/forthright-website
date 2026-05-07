@@ -266,6 +266,53 @@ animation: hero-zoom 4s ease-out forwards;
 .event-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 .event-card--past { opacity: .88; }
 
+/* ── EVENT LIST CARDS (homepage) ── */
+.events-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.event-list-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; gap: 1.25rem;
+  transition: transform .2s, box-shadow .2s;
+}
+.event-list-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+.elc-logo {
+  width: 56px; height: 56px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.elc-logo img {
+  width: 38px; height: 38px;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: .6;
+}
+
+.elc-body { flex: 1; }
+
+.elc-title {
+  font-family: var(--font-head);
+  font-size: 1.05rem; font-weight: 600;
+  color: var(--text);
+  margin-bottom: .3rem;
+  line-height: 1.3;
+}
+
+.elc-meta {
+  font-size: .82rem; color: var(--text-muted);
+  margin-bottom: .15rem;
+}
+
 .card-img {
   height: 180px;
   background-size: cover; background-position: center;
@@ -274,6 +321,11 @@ animation: hero-zoom 4s ease-out forwards;
   background: var(--green);
   display: flex; align-items: center; justify-content: center;
   font-size: 3rem;
+}
+
+.card-img--muted {
+  filter: grayscale(100%);
+  opacity: .5;
 }
 
 .card-body { padding: 1.25rem; }
@@ -286,6 +338,110 @@ animation: hero-zoom 4s ease-out forwards;
   padding: .2rem .65rem; border-radius: 20px;
   text-transform: uppercase; letter-spacing: .07em;
 }
+
+.directions-link {
+  font-size: .78rem; font-weight: 600;
+  color: var(--green);
+  text-decoration: underline;
+  margin-left: .4rem;
+}
+.directions-link:hover { color: var(--green-light); }
+
+/* ── GROUPED UPCOMING (events page) ── */
+.event-group {
+  margin-bottom: 2.5rem;
+}
+
+.event-group-header {
+  font-family: var(--font-head);
+  font-size: 1.4rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--green);
+  padding-bottom: .75rem;
+  border-bottom: 2px solid var(--amber);
+  margin-bottom: 1rem;
+}
+
+.event-group-list {
+  display: flex; flex-direction: column; gap: 0;
+}
+
+.event-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 160px 200px;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.event-row:last-child { border-bottom: none; }
+
+.event-row-logo {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+}
+.event-row-logo img {
+  width: 24px; height: 24px;
+  object-fit: contain;
+  filter: grayscale(100%); opacity: .6;
+}
+
+.event-row-title {
+  font-family: var(--font-head);
+  font-size: 1rem; font-weight: 600;
+  color: var(--text);
+}
+
+.event-row-date {
+  font-size: .82rem; color: var(--text-muted);
+}
+
+.event-row-venue {
+  font-size: .82rem; color: var(--text-muted);
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  display: flex; gap: .75rem; flex-wrap: wrap;
+  margin-bottom: 1.75rem; align-items: center;
+}
+
+.filter-bar input, .filter-bar select {
+  font-family: var(--font-body); font-size: .85rem;
+  padding: .6rem .9rem;
+  border: 1.5px solid var(--border); border-radius: 7px;
+  background: var(--white); color: var(--text);
+  transition: border-color .2s;
+}
+.filter-bar input { flex: 1; min-width: 160px; }
+.filter-bar input:focus, .filter-bar select:focus {
+  outline: none; border-color: var(--green);
+}
+
+.btn-clear-filter {
+  font-family: var(--font-body); font-size: .85rem; font-weight: 600;
+  padding: .6rem 1.1rem; border-radius: 7px;
+  border: 1.5px solid var(--border);
+  background: transparent; color: var(--text-muted);
+  cursor: pointer; transition: .2s;
+}
+.btn-clear-filter:hover { border-color: var(--green); color: var(--green); }
+
+@media (max-width: 680px) {
+  .event-row {
+    grid-template-columns: 36px 1fr;
+    grid-template-rows: auto auto;
+  }
+  .event-row-date, .event-row-venue {
+    grid-column: 2;
+  }
+}
+
 /* WCAG AA: amber badge uses dark text on amber bg — contrast ~8:1 */
 .badge-featured {
   background: var(--amber);
@@ -337,23 +493,18 @@ animation: hero-zoom 4s ease-out forwards;
 }
 
 .client-logo-wrap {
-  background: var(--white);
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1rem 1.75rem;
   display: flex; align-items: center; justify-content: center;
   min-width: 140px; min-height: 72px;
   transition: box-shadow .2s;
 }
-.client-logo-wrap:hover { box-shadow: var(--shadow); }
 
 .client-logo-wrap img {
-  max-height: 44px; max-width: 120px;
+  max-height: 100px; max-width: 140px;
   width: auto; height: auto;
   object-fit: contain;
-  filter: grayscale(100%);
-  opacity: .65;
-  transition: filter .2s, opacity .2s;
+  
 }
 .client-logo-wrap:hover img {
   filter: grayscale(0%);
