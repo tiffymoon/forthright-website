@@ -2,7 +2,7 @@
    FORTHRIGHT EVENTS — Public Styles
    ════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,700&family=Albert+Sans:wght@300;400;500;600&display=swap');
 
 :root {
   --green:       #1a3d2b;
@@ -17,8 +17,8 @@
   --border:      #d4e2da;
   --shadow:      0 4px 24px rgba(26,61,43,.10);
   --radius:      10px;
-  --font-head:   'Inter', sans-serif;
-  --font-body:   'Inter', sans-serif;
+  --font-head: 'Montserrat', sans-serif;
+  --font-body: 'Albert Sans', sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,6 +29,7 @@ body {
   color: var(--text);
   background: var(--cream);
   line-height: 1.6;
+  font-size: 16px;
 }
 
 img { max-width: 100%; display: block; }
@@ -216,6 +217,7 @@ animation: hero-zoom 4s ease-out forwards;
 
 .service-card-body {
   padding: 1.8rem 1.5rem;
+  font-size: 1.2rem; font-weight: 400;
 }
 
 .service-card h3 {
@@ -227,7 +229,7 @@ animation: hero-zoom 4s ease-out forwards;
 }
 
 .service-card p { 
-  font-size: .82rem; 
+  font-size: 1rem; 
   color: var(--text-muted); 
   line-height: 1.7; 
 }
@@ -292,10 +294,8 @@ animation: hero-zoom 4s ease-out forwards;
   overflow: hidden;
 }
 .elc-logo img {
-  width: 38px; height: 38px;
-  object-fit: contain;
-  filter: grayscale(100%);
-  opacity: .6;
+  width: 56px; height: 56px;
+  object-fit: cover;
 }
 
 .elc-body { flex: 1; }
@@ -311,6 +311,31 @@ animation: hero-zoom 4s ease-out forwards;
 .elc-meta {
   font-size: .82rem; color: var(--text-muted);
   margin-bottom: .15rem;
+}
+
+.elc-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--white);
+  font-family: var(--font-head);
+  font-size: 1.3rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.event-row-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--white);
+  font-family: var(--font-head);
+  font-size: .9rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.event-row-logo img {
+  width: 36px; height: 36px;
+  object-fit: cover;
 }
 
 .card-img {
@@ -386,9 +411,8 @@ animation: hero-zoom 4s ease-out forwards;
   overflow: hidden; flex-shrink: 0;
 }
 .event-row-logo img {
-  width: 24px; height: 24px;
-  object-fit: contain;
-  filter: grayscale(100%); opacity: .6;
+  width: 36px; height: 36px;
+  object-fit: cover;
 }
 
 .event-row-title {
@@ -411,26 +435,27 @@ animation: hero-zoom 4s ease-out forwards;
   margin-bottom: 1.75rem; align-items: center;
 }
 
-.filter-bar input, .filter-bar select {
-  font-family: var(--font-body); font-size: .85rem;
+.filter-bar select {
+  font-family: var(--font-body); font-size: .95rem;
   padding: .6rem .9rem;
   border: 1.5px solid var(--border); border-radius: 7px;
   background: var(--white); color: var(--text);
+  height: 44px;
+  cursor: pointer;
   transition: border-color .2s;
 }
-.filter-bar input { flex: 1; min-width: 160px; }
-.filter-bar input:focus, .filter-bar select:focus {
-  outline: none; border-color: var(--green);
-}
+.filter-bar select:focus { outline: none; border-color: var(--green); }
 
 .btn-clear-filter {
-  font-family: var(--font-body); font-size: .85rem; font-weight: 600;
-  padding: .6rem 1.1rem; border-radius: 7px;
-  border: 1.5px solid var(--border);
-  background: transparent; color: var(--text-muted);
-  cursor: pointer; transition: .2s;
+  font-family: var(--font-body); font-size: .95rem; font-weight: 600;
+  padding: .6rem 1.1rem;
+  height: 44px;
+  border-radius: 7px;
+  border: none;
+  background: var(--green); color: var(--white);
+  cursor: pointer; transition: background .2s;
 }
-.btn-clear-filter:hover { border-color: var(--green); color: var(--green); }
+.btn-clear-filter:hover { background: var(--green-light); }
 
 @media (max-width: 680px) {
   .event-row {

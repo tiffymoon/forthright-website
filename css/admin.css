@@ -2,7 +2,7 @@
    FORTHRIGHT EVENTS — Admin Styles
    ════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,700&family=Albert+Sans:wght@300;400;500;600&display=swap');
 
 :root {
   --green:      #1a3d2b;
@@ -17,8 +17,8 @@
   --border:     #dde8e2;
   --danger:     #c0392b;
   --radius:     10px;
-  --font-head:   'Inter', sans-serif;
-  --font-body:   'Inter', sans-serif;
+  --font-head: 'Montserrat', sans-serif;
+  --font-body: 'Albert Sans', sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
