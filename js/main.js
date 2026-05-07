@@ -1,7 +1,7 @@
 // ════════════════════════════════════════════
 // FORTHRIGHT EVENTS — Public Site JS
 // ════════════════════════════════════════════
-
+let allPastEvents = [];
 const today = new Date().toISOString().split('T')[0];
 const isHomepage = !document.getElementById('past-grid');
 
@@ -12,8 +12,9 @@ async function loadEvents() {
 
   const { data: events, error } = await db
     .from('events')
-    .select('*')
+    .select('*, clients(logo_url)')
     .order('event_date', { ascending: true });
+    
 
   if (error) {
     if (upcomingGrid) upcomingGrid.innerHTML = '<p class="loading-msg">Could not load events.</p>';
@@ -25,16 +26,17 @@ async function loadEvents() {
 
   // Homepage: show max 4 upcoming
   if (isHomepage) {
-    if (upcomingGrid) upcomingGrid.innerHTML = '';
-    const preview = upcoming.slice(0, 4);
-    if (preview.length === 0) {
-      if (upcomingEmpty) upcomingEmpty.style.display = 'block';
-    } else {
-      if (upcomingEmpty) upcomingEmpty.style.display = 'none';
-      preview.forEach(e => upcomingGrid.insertAdjacentHTML('beforeend', eventCard(e, false)));
-    }
-    return;
+  if (upcomingGrid) upcomingGrid.innerHTML = '';
+  upcomingGrid.className = 'events-list';
+  const preview = upcoming.slice(0, 3);
+  if (preview.length === 0) {
+    if (upcomingEmpty) upcomingEmpty.style.display = 'block';
+  } else {
+    if (upcomingEmpty) upcomingEmpty.style.display = 'none';
+    preview.forEach(e => upcomingGrid.insertAdjacentHTML('beforeend', eventListCard(e)));
   }
+  return;
+}
 
   // Events page: show all
   const pastGrid  = document.getElementById('past-grid');
@@ -46,15 +48,114 @@ async function loadEvents() {
     if (upcomingEmpty) upcomingEmpty.style.display = 'block';
   } else {
     if (upcomingEmpty) upcomingEmpty.style.display = 'none';
-    upcoming.forEach(e => upcomingGrid.insertAdjacentHTML('beforeend', eventCard(e, false)));
+    upcomingGrid.className = '';
+    upcomingGrid.innerHTML = groupedUpcomingHTML(upcoming);
   }
 
   if (past.length === 0) {
     if (pastEmpty) pastEmpty.style.display = 'block';
   } else {
     if (pastEmpty) pastEmpty.style.display = 'none';
-    past.forEach(e => pastGrid.insertAdjacentHTML('beforeend', eventCard(e, true)));
+    allPastEvents = past;
+renderPastEvents(past);
   }
+}
+
+function renderPastEvents(events) {
+  const pastGrid = document.getElementById('past-grid');
+  const pastEmpty = document.getElementById('past-empty');
+  if (!pastGrid) return;
+  pastGrid.innerHTML = '';
+  if (events.length === 0) {
+    if (pastEmpty) pastEmpty.style.display = 'block';
+  } else {
+    if (pastEmpty) pastEmpty.style.display = 'none';
+    events.forEach(e => pastGrid.insertAdjacentHTML('beforeend', eventCard(e, true)));
+  }
+}
+
+function filterPastEvents() {
+  const name     = document.getElementById('filter-name')?.value.toLowerCase() || '';
+  const date     = document.getElementById('filter-date')?.value.toLowerCase() || '';
+
+  const filtered = allPastEvents.filter(e => {
+    const matchName     = e.title.toLowerCase().includes(name);
+    const dateStr       = new Date(e.event_date + 'T00:00:00').toLocaleDateString('en-US', {
+      month: 'long', year: 'numeric', day: 'numeric'
+    }).toLowerCase();
+    const matchDate = !date || dateStr.includes(date);
+    return matchName && matchDate && matchCategory;
+  });
+
+  renderPastEvents(filtered);
+}
+
+function clearFilters() {
+  document.getElementById('filter-name').value = '';
+  document.getElementById('filter-date').value = '';
+  renderPastEvents(allPastEvents);
+}
+
+function eventListCard(e) {
+  const dateStr = new Date(e.event_date + 'T00:00:00').toLocaleDateString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric'
+  });
+  const endDate = e.end_date
+    ? ' – ' + new Date(e.end_date + 'T00:00:00').toLocaleDateString('en-US', {
+        month: 'long', day: 'numeric', year: 'numeric'
+      })
+    : '';
+  const logo = (e.clients && e.clients.logo_url) ? e.clients.logo_url : 'images/forthright-icon.png';
+
+  return `
+    <div class="event-list-card">
+      <div class="elc-logo">
+        <img src="${logo}" alt="">
+      </div>
+      <div class="elc-body">
+        <h3 class="elc-title">${e.title}</h3>
+        <p class="elc-meta">📅 ${dateStr}${endDate}</p>
+        ${e.location ? `<p class="elc-meta">📍 ${e.location}</p>${e.location_url ? `<p class="elc-meta"><a href="${e.location_url}" target="_blank" class="directions-link">Directions →</a></p>` : ''}` : ''}
+      </div>
+    </div>`;
+}
+
+function groupedUpcomingHTML(events) {
+  const groups = {};
+  events.forEach(e => {
+    const d = new Date(e.event_date + 'T00:00:00');
+    const key = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(e);
+  });
+
+  return Object.entries(groups).map(([month, evts]) => `
+    <div class="event-group">
+      <div class="event-group-header">${month}</div>
+      <div class="event-group-list">
+        ${evts.map(e => {
+          const startDate = new Date(e.event_date + 'T00:00:00').toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric'
+          });
+          const endDate = e.end_date
+            ? ' – ' + new Date(e.end_date + 'T00:00:00').toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric'
+              })
+            : '';
+          const logo = (e.clients && e.clients.logo_url) ? e.clients.logo_url : 'images/forthright-icon.png';
+          return `
+            <div class="event-row">
+              <div class="event-row-logo">
+                <img src="${logo}" alt="">
+              </div>
+              <div class="event-row-title">${e.title}</div>
+              <div class="event-row-date">📅 ${startDate}${endDate}</div>
+              <div class="event-row-venue">${e.location ? `📍 ${e.location}` : ''}${e.location_url ? ` <a href="${e.location_url}" target="_blank" class="directions-link">Directions →</a>` : ''}</div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`
+  ).join('');
 }
 
 async function loadClients() {
@@ -82,32 +183,30 @@ async function loadClients() {
 }
 
 function eventCard(e, isPast) {
-  const dateStr = new Date(e.event_date + 'T00:00:00').toLocaleDateString('en-US', {
-    weekday: 'short', year: 'numeric', month: 'long', day: 'numeric'
+  const startDate = new Date(e.event_date + 'T00:00:00').toLocaleDateString('en-US', {
+  month: 'long', day: 'numeric', year: 'numeric'
   });
-  const cover = e.cover_image
-    ? `<div class="card-img" style="background-image:url('${e.cover_image}')"></div>`
-    : `<div class="card-img card-img--placeholder"><span>${categoryIcon(e.category)}</span></div>`;
+  const endDate = e.end_date
+    ? new Date(e.end_date + 'T00:00:00').toLocaleDateString('en-US', {
+        month: 'long', day: 'numeric', year: 'numeric'
+      })
+    : null;
+  const dateStr = endDate ? `${startDate} – ${endDate}` : startDate;
+    const coverImg = e.cover_image || (e.clients && e.clients.logo_url) || 'images/forthright-icon.png';
+    const isPlaceholder = !e.cover_image;
+    const cover = `<div class="card-img ${isPlaceholder ? 'card-img--muted' : ''}" style="background-image:url('${coverImg}');background-size:${isPlaceholder ? 'contain' : 'cover'};background-repeat:no-repeat;background-position:center;background-color:#f0f0f0;"></div>`;
 
   const albumBtn = isPast && e.facebook_album
     ? `<a href="${e.facebook_album}" target="_blank" class="btn-album">📸 View Photos</a>`
     : '';
-  const featuredBadge = e.featured ? `<span class="badge-featured">Featured</span>` : '';
 
   return `
     <div class="event-card ${isPast ? 'event-card--past' : ''}">
       ${cover}
       <div class="card-body">
-        <div class="card-meta">
-          <span class="badge-category">${e.category}</span>
-          ${featuredBadge}
-        </div>
         <h3 class="card-title">${e.title}</h3>
         <p class="card-date">📅 ${dateStr}${e.event_time ? ' · ' + e.event_time : ''}</p>
-        ${e.location    ? `<p class="card-location">📍 ${e.location}</p>`  : ''}
-        ${e.spots       ? `<p class="card-spots">👥 ${e.spots}</p>`        : ''}
-        ${e.price       ? `<p class="card-price">💰 ${e.price}</p>`        : ''}
-        ${e.description ? `<p class="card-desc">${e.description}</p>`      : ''}
+        ${e.location ? `<p class="card-location">📍 ${e.location}${e.location_url ? ` <a href="${e.location_url}" target="_blank" class="directions-link">Directions →</a>` : ''}</p>` : ''}
         ${albumBtn}
       </div>
     </div>`;
