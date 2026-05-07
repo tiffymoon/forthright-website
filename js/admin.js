@@ -1,265 +1,242 @@
-/* ════════════════════════════════════════════
-   FORTHRIGHT EVENTS — admin.js
-   Auth via Supabase. RLS protects all writes.
-   ════════════════════════════════════════════ */
+// ════════════════════════════════════════════
+// FORTHRIGHT EVENTS — Admin JS
+// ════════════════════════════════════════════
 
-const CAT_LABELS   = { sports: 'Sports', teambuilding: 'Team Building', corporate: 'Corporate' };
-const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let editingId       = null;
+let editingClientId = null;
 
-let events    = [];
-let editingId = null;
-
-// ── Helpers ───────────────────────────────────
-
-function isUpcoming(ev) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const [y,m,d] = ev.date.split('-').map(Number);
-  return new Date(y, m-1, d) >= today;
-}
-
-function showToast(msg, bg) {
-  const t = document.getElementById('toast');
-  t.textContent      = msg;
-  t.style.background = bg || 'var(--green-deep)';
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3200);
-}
-
-function setLoading(btn, loading) {
-  btn.disabled    = loading;
-  btn.textContent = loading ? 'Saving…' : 'Save Event';
-}
-
-// ── Auth ──────────────────────────────────────
-
-async function doLogin() {
-  const email    = document.getElementById('emailInput').value.trim();
-  const password = document.getElementById('passwordInput').value;
-  const btn      = document.getElementById('loginBtn');
-  const err      = document.getElementById('loginError');
-
-  err.classList.remove('show');
-  btn.disabled    = true;
-  btn.textContent = 'Signing in…';
-
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    err.textContent = error.message;
-    err.classList.add('show');
-    btn.disabled    = false;
-    btn.textContent = 'Sign In';
-    return;
-  }
-
-  if (data.session) {
-    showAdmin();
-  }
-}
-
-async function doLogout() {
-  await supabase.auth.signOut();
-  showLogin();
+// ── Auth ──────────────────────────────────
+async function checkSession() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) { showApp(); loadEvents(); loadClients(); }
+  else { showLogin(); }
 }
 
 function showLogin() {
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('adminPanel').style.display  = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
 }
 
-function showAdmin() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('adminPanel').style.display  = 'grid';
-  loadAndRender();
-}
-
-// ── Load Events ───────────────────────────────
-
-async function loadAndRender() {
-  const { data, error } = await supabase
-    .from('events')
-    .select('*')
-    .order('date', { ascending: true });
-
-  if (error) { showToast('Error: ' + error.message, '#c0392b'); return; }
-  events = data || [];
-  renderAdminList();
-}
-
-// ── Render List ───────────────────────────────
-
-function renderAdminList() {
-  const statusFilter = document.getElementById('filterStatus').value;
-  const catFilter    = document.getElementById('filterCat').value;
-
-  let filtered = events.filter(ev => {
-    const upcoming = isUpcoming(ev);
-    if (statusFilter === 'upcoming' && !upcoming) return false;
-    if (statusFilter === 'past'     &&  upcoming) return false;
-    if (catFilter !== 'all' && ev.category !== catFilter) return false;
-    return true;
-  });
-
-  filtered.sort((a, b) => {
-    const ad = new Date(a.date), bd = new Date(b.date);
-    return isUpcoming(a) ? ad - bd : bd - ad;
-  });
-
-  const list = document.getElementById('adminEventsList');
-  if (!filtered.length) {
-    list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--ink-muted)">No events found.</div>';
-    return;
+async function login() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl    = document.getElementById('login-error');
+  const btn      = document.getElementById('login-btn');
+  errEl.textContent = '';
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  const { error } = await db.auth.signInWithPassword({ email, password });
+  if (error) {
+    errEl.textContent = error.message;
+    btn.disabled = false; btn.textContent = 'Sign In';
+  } else {
+    showApp(); loadEvents(); loadClients();
   }
+}
 
-  list.innerHTML = filtered.map(ev => {
-    const upcoming  = isUpcoming(ev);
-    const [y, m, d] = ev.date.split('-').map(Number);
-    const dateStr   = `${d} ${MONTHS_SHORT[m-1]} ${y}`;
-    return `
-      <div class="admin-event-row" id="adminrow-${ev.id}">
-        <img class="admin-event-thumb"
-             src="${ev.cover_image || 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=200&q=60'}"
-             alt="${ev.title}" loading="lazy">
-        <div class="admin-event-info">
-          <div class="admin-event-title">${ev.title}</div>
-          <div class="admin-event-meta">${dateStr} · ${ev.location || '—'} · ${CAT_LABELS[ev.category] || ev.category}</div>
-        </div>
-        <span class="status-pill ${upcoming ? 'status-upcoming' : 'status-past'}">
-          ${upcoming ? 'Upcoming' : 'Past'}
-        </span>
-        <div class="admin-event-actions">
-          <button class="btn-edit"   onclick="editEvent('${ev.id}')">Edit</button>
-          <button class="btn-delete" onclick="deleteEvent('${ev.id}')">Delete</button>
-        </div>
-      </div>`;
+async function logout() {
+  await db.auth.signOut();
+  showLogin();
+}
+
+// ── Events ────────────────────────────────
+async function loadEvents() {
+  const tbody = document.getElementById('events-tbody');
+  tbody.innerHTML = '<tr><td colspan="5" class="loading-cell">Loading…</td></tr>';
+
+  const { data, error } = await db.from('events').select('*').order('event_date', { ascending: false });
+  if (error) { tbody.innerHTML = `<tr><td colspan="5" class="loading-cell">Error: ${error.message}</td></tr>`; return; }
+  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="loading-cell">No events yet. Add one above.</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(e => {
+    const d = new Date(e.event_date + 'T00:00:00').toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+    const status = e.event_date >= new Date().toISOString().split('T')[0] ? 'upcoming' : 'past';
+    return `<tr>
+      <td><strong>${e.title}</strong>${e.featured ? ' <span class="badge-feat">★</span>' : ''}</td>
+      <td>${e.category}</td>
+      <td>${d}</td>
+      <td><span class="status-badge status-${status}">${status}</span></td>
+      <td class="actions-cell">
+        <button class="btn-edit" onclick="editEvent('${e.id}')">Edit</button>
+        <button class="btn-del"  onclick="deleteEvent('${e.id}', '${e.title.replace(/'/g,"\\'")}')">Delete</button>
+      </td>
+    </tr>`;
   }).join('');
 }
 
-function filterEvents() { renderAdminList(); }
+function openForm(event = null) {
+  editingId = event ? event.id : null;
+  const fields = ['title','category','event_date','event_time','location','spots','price','description','cover_image','facebook_album'];
+  fields.forEach(f => { const el = document.getElementById('f-' + f); if (el) el.value = event ? (event[f] || '') : ''; });
+  const featuredEl = document.getElementById('f-featured');
+  if (featuredEl) featuredEl.checked = event ? !!event.featured : false;
 
-// ── Sections ──────────────────────────────────
+  toggleAlbumField(event ? event.event_date : null);
 
-function showSection(id) {
-  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-  document.getElementById('section-' + id).classList.add('active');
-  document.getElementById('link-' + id)?.classList.add('active');
-  if (id !== 'add') { editingId = null; resetForm(); }
+  document.getElementById('form-section').style.display = 'block';
+  document.getElementById('form-title').textContent = event ? 'Edit Event' : 'Add New Event';
+  document.getElementById('saveBtn').textContent = event ? 'Update Event' : 'Save Event';
+  document.getElementById('saveNote').textContent = '';
+  document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+
+  document.getElementById('f-event_date').onchange = function() { toggleAlbumField(this.value); };
 }
 
-// ── Form ──────────────────────────────────────
-
-function resetForm() {
-  ['title','category','date','time','end_time','location','spots',
-   'cover_image','facebook_album','description'].forEach(f => {
-    const el = document.getElementById('f-' + f);
-    if (el) el.value = '';
-  });
-  document.getElementById('f-featured').checked   = false;
-  document.getElementById('saveNote').textContent  = '';
-  document.getElementById('formTitle').textContent = 'Add New Event';
-  document.getElementById('formSubtitle').textContent = 'Fill in the details. The event auto-sorts as Upcoming or Past based on its date.';
-}
-
-function editEvent(id) {
-  const ev = events.find(e => e.id === id);
-  if (!ev) return;
-  editingId = id;
-  document.getElementById('f-title').value          = ev.title          || '';
-  document.getElementById('f-category').value       = ev.category       || '';
-  document.getElementById('f-date').value           = ev.date           || '';
-  document.getElementById('f-time').value           = ev.time           ? ev.time.slice(0,5) : '';
-  document.getElementById('f-end_time').value       = ev.end_time       ? ev.end_time.slice(0,5) : '';
-  document.getElementById('f-location').value       = ev.location       || '';
-  document.getElementById('f-spots').value          = ev.spots          || '';
-  document.getElementById('f-cover_image').value    = ev.cover_image    || '';
-  document.getElementById('f-facebook_album').value = ev.facebook_album || '';
-  document.getElementById('f-description').value    = ev.description    || '';
-  document.getElementById('f-featured').checked     = ev.featured       || false;
-  document.getElementById('formTitle').textContent    = 'Edit Event';
-  document.getElementById('formSubtitle').textContent = 'Update the details and click Save.';
-  showSection('add');
-}
-
-async function saveEvent() {
-  const title    = document.getElementById('f-title').value.trim();
-  const date     = document.getElementById('f-date').value;
-  const category = document.getElementById('f-category').value;
-
-  if (!title || !date || !category) {
-    showToast('Please fill in Title, Category, and Date.', '#c0392b');
-    return;
-  }
-
-  const saveBtn = document.getElementById('saveBtn');
-  setLoading(saveBtn, true);
-
-  const payload = {
-    title,
-    category,
-    date,
-    time:           document.getElementById('f-time').value               || null,
-    end_time:       document.getElementById('f-end_time').value           || null,
-    location:       document.getElementById('f-location').value.trim()    || null,
-    spots:          document.getElementById('f-spots').value.trim()       || null,
-    cover_image:    document.getElementById('f-cover_image').value.trim() || null,
-    facebook_album: document.getElementById('f-facebook_album').value.trim() || null,
-    description:    document.getElementById('f-description').value.trim() || null,
-    featured:       document.getElementById('f-featured').checked,
-  };
-
-  let error;
-  if (editingId) {
-    ({ error } = await supabase.from('events').update(payload).eq('id', editingId));
-  } else {
-    ({ error } = await supabase.from('events').insert(payload));
-  }
-
-  setLoading(saveBtn, false);
-
-  if (error) { showToast('Error: ' + error.message, '#c0392b'); return; }
-
-  showToast(editingId ? '✅ Event updated!' : '✅ Event added!');
-  editingId = null;
-  resetForm();
-  showSection('events');
-  await loadAndRender();
-}
-
-async function deleteEvent(id) {
-  if (!confirm('Delete this event? This cannot be undone.')) return;
-  const { error } = await supabase.from('events').delete().eq('id', id);
-  if (error) { showToast('Error: ' + error.message, '#c0392b'); return; }
-  showToast('🗑 Event deleted.');
-  await loadAndRender();
+function toggleAlbumField(dateVal) {
+  const today = new Date().toISOString().split('T')[0];
+  const isPast = dateVal && dateVal < today;
+  const row = document.getElementById('album-field-row');
+  if (row) row.style.display = isPast ? '' : 'none';
 }
 
 function cancelEdit() {
+  document.getElementById('form-section').style.display = 'none';
   editingId = null;
-  resetForm();
-  showSection('events');
 }
 
-supabase.auth.onAuthStateChange((event, session) => {
-  if (session) {
-    showAdmin();
-  } else {
-    showLogin();
+async function editEvent(id) {
+  const { data, error } = await db.from('events').select('*').eq('id', id).single();
+  if (error) { toast('Could not load event.', 'error'); return; }
+  openForm(data);
+}
+
+async function saveEvent() {
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const payload = {
+    title:          document.getElementById('f-title').value.trim(),
+    category:       document.getElementById('f-category').value,
+    event_date:     document.getElementById('f-event_date').value,
+    event_time:     document.getElementById('f-event_time').value.trim(),
+    location:       document.getElementById('f-location').value.trim(),
+    spots:          document.getElementById('f-spots').value.trim(),
+    price:          document.getElementById('f-price').value.trim(),
+    description:    document.getElementById('f-description').value.trim(),
+    cover_image:    document.getElementById('f-cover_image').value.trim(),
+    facebook_album: document.getElementById('f-facebook_album').value.trim(),
+    featured:       document.getElementById('f-featured').checked,
+  };
+
+  if (!payload.title || !payload.category || !payload.event_date) {
+    toast('Title, category, and date are required.', 'error');
+    btn.disabled = false; btn.textContent = editingId ? 'Update Event' : 'Save Event';
+    return;
   }
-});
 
-// ── Init ──────────────────────────────────────
+  let error;
+  if (editingId) { ({ error } = await db.from('events').update(payload).eq('id', editingId)); }
+  else           { ({ error } = await db.from('events').insert(payload)); }
 
-window.addEventListener('DOMContentLoaded', async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    showAdmin();
-  } else {
-    showLogin();
+  btn.disabled = false; btn.textContent = editingId ? 'Update Event' : 'Save Event';
+  if (error) { toast('Save failed: ' + error.message, 'error'); }
+  else { toast(editingId ? 'Event updated!' : 'Event added!', 'success'); cancelEdit(); loadEvents(); }
+}
+
+async function deleteEvent(id, title) {
+  if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  const { error } = await db.from('events').delete().eq('id', id);
+  if (error) toast('Delete failed: ' + error.message, 'error');
+  else { toast('Event deleted.', 'success'); loadEvents(); }
+}
+
+// ── Clients ───────────────────────────────
+async function loadClients() {
+  const tbody = document.getElementById('clients-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="4" class="loading-cell">Loading…</td></tr>';
+
+  const { data, error } = await db.from('clients').select('*').order('sort_order', { ascending: true });
+  if (error) { tbody.innerHTML = `<tr><td colspan="4" class="loading-cell">Error: ${error.message}</td></tr>`; return; }
+  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="loading-cell">No clients yet. Add one below.</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(c => `<tr>
+    <td><strong>${c.name}</strong></td>
+    <td>${c.logo_url ? `<img src="${c.logo_url}" alt="${c.name}" style="height:32px;max-width:100px;object-fit:contain;">` : '<span style="color:var(--text-muted);font-size:.8rem">No logo</span>'}</td>
+    <td><label class="toggle-label" style="justify-content:center;">
+      <input type="checkbox" ${c.featured ? 'checked' : ''} onchange="toggleClientFeatured('${c.id}', this.checked)">
+      <span class="toggle-text">${c.featured ? 'Yes' : 'No'}</span>
+    </label></td>
+    <td class="actions-cell">
+      <button class="btn-edit" onclick="editClient('${c.id}')">Edit</button>
+      <button class="btn-del"  onclick="deleteClient('${c.id}', '${c.name.replace(/'/g,"\\'")}')">Delete</button>
+    </td>
+  </tr>`).join('');
+}
+
+function openClientForm(client = null) {
+  editingClientId = client ? client.id : null;
+  document.getElementById('fc-name').value      = client ? (client.name || '') : '';
+  document.getElementById('fc-logo_url').value  = client ? (client.logo_url || '') : '';
+  document.getElementById('fc-sort_order').value = client ? (client.sort_order || 0) : 0;
+  document.getElementById('fc-featured').checked = client ? !!client.featured : true;
+
+  document.getElementById('client-form-section').style.display = 'block';
+  document.getElementById('client-form-title').textContent = client ? 'Edit Client' : 'Add Client';
+  document.getElementById('saveClientBtn').textContent = client ? 'Update Client' : 'Save Client';
+  document.getElementById('client-form-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelClientEdit() {
+  document.getElementById('client-form-section').style.display = 'none';
+  editingClientId = null;
+}
+
+async function editClient(id) {
+  const { data, error } = await db.from('clients').select('*').eq('id', id).single();
+  if (error) { toast('Could not load client.', 'error'); return; }
+  openClientForm(data);
+}
+
+async function saveClient() {
+  const btn = document.getElementById('saveClientBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const payload = {
+    name:       document.getElementById('fc-name').value.trim(),
+    logo_url:   document.getElementById('fc-logo_url').value.trim(),
+    sort_order: parseInt(document.getElementById('fc-sort_order').value) || 0,
+    featured:   document.getElementById('fc-featured').checked,
+  };
+
+  if (!payload.name) {
+    toast('Client name is required.', 'error');
+    btn.disabled = false; btn.textContent = editingClientId ? 'Update Client' : 'Save Client';
+    return;
   }
 
-  document.getElementById('passwordInput')
-    .addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-  document.getElementById('emailInput')
-    .addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-});
+  let error;
+  if (editingClientId) { ({ error } = await db.from('clients').update(payload).eq('id', editingClientId)); }
+  else                 { ({ error } = await db.from('clients').insert(payload)); }
+
+  btn.disabled = false; btn.textContent = editingClientId ? 'Update Client' : 'Save Client';
+  if (error) { toast('Save failed: ' + error.message, 'error'); }
+  else { toast(editingClientId ? 'Client updated!' : 'Client added!', 'success'); cancelClientEdit(); loadClients(); }
+}
+
+async function toggleClientFeatured(id, featured) {
+  const { error } = await db.from('clients').update({ featured }).eq('id', id);
+  if (error) toast('Update failed.', 'error');
+  else { toast(featured ? 'Now featured on homepage.' : 'Removed from homepage.', 'success'); loadClients(); }
+}
+
+async function deleteClient(id, name) {
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  const { error } = await db.from('clients').delete().eq('id', id);
+  if (error) toast('Delete failed: ' + error.message, 'error');
+  else { toast('Client deleted.', 'success'); loadClients(); }
+}
+
+// ── Toast ─────────────────────────────────
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast toast--${type} toast--show`;
+  setTimeout(() => el.classList.remove('toast--show'), 3000);
+}
+
+document.getElementById('login-password')?.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+checkSession();

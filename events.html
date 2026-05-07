@@ -4,94 +4,109 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Events — Forthright Events Management</title>
-  <meta name="description" content="Browse upcoming sports and corporate events managed by Forthright, and view photo galleries from past events.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <meta name="description" content="Browse upcoming and past sports tournaments and corporate events managed by Forthright Events Management.">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav id="navbar">
-    <a href="index.html" class="logo">
-      <img src="images/logo_forthright.png" alt="Forthright Events Management" class="logo-img">
-    </a>
-    <ul class="nav-links">
-      <li><a href="index.html#about">About</a></li>
-      <li><a href="index.html#services">Services</a></li>
-      <li><a href="events.html" class="nav-active">Events</a></li>
-      <li><a href="index.html#contact">Contact</a></li>
-    </ul>
-    <button class="burger" id="burger" onclick="toggleMenu()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html#about">About</a>
-    <a href="index.html#services">Services</a>
-    <a href="events.html">Events</a>
-    <a href="index.html#contact">Contact</a>
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <img src="images/forthright-logo.jpeg" alt="Forthright Events" onerror="this.style.display='none'">
+  </a>
+  
+  <ul class="nav-links" id="nav-menu">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="events.html" class="nav-active">Events</a></li>
+    <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="container">
+    <div class="page-header-inner">
+      <div>
+        <div class="section-eyebrow" style="color:rgba(255,255,255,.55)">Events Calendar</div>
+        <h1 class="page-header-title">All Events</h1>
+      </div>
+      <a href="index.html" class="btn-outline" style="font-size:.85rem;padding:.55rem 1.2rem;">← Back to Home</a>
+    </div>
   </div>
+</div>
 
-  <!-- PAGE HEADER -->
-  <section class="page-header">
-    <div class="container">
-      <p class="section-tag">What's On</p>
-      <h1>Events</h1>
-      <p>Browse our upcoming events and relive past ones through our photo galleries.</p>
+<!-- EVENTS -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="upcoming-panel">Upcoming Events</button>
+      <button class="tab-btn" data-tab="past-panel">Past Events</button>
     </div>
-  </section>
 
-  <!-- EVENTS -->
-  <section class="events-section" id="events">
-    <div class="container">
-      <div class="events-tabs">
-        <button class="tab-btn active" id="tab-upcoming" onclick="switchTab('upcoming')">Upcoming Events</button>
-        <button class="tab-btn" id="tab-past" onclick="switchTab('past')">Past Events</button>
-      </div>
+    <div id="upcoming-panel" class="tab-panel active">
+      <div class="events-grid" id="upcoming-grid"><p class="loading-msg">Loading…</p></div>
+      <div class="empty-state" id="upcoming-empty">No upcoming events at the moment. Check back soon!</div>
+    </div>
 
-      <!-- Upcoming Tab -->
-      <div class="tab-panel active" id="panel-upcoming">
-        <div class="calendar-strip" id="calendarStrip"></div>
-        <div class="events-grid" id="upcomingGrid">
-          <div class="events-loading">Loading events…</div>
+    <div id="past-panel" class="tab-panel">
+      <div class="events-grid" id="past-grid"><p class="loading-msg">Loading…</p></div>
+      <div class="empty-state" id="past-empty">No past events recorded yet.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h2>Let's plan your next event</h2>
+        <p>Get in touch with our team to discuss your requirements.</p>
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div>
+            <div class="contact-label">Phone</div>
+            <div class="contact-value">0917 526 5614 or 0998 511 0454</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div>
+            <div class="contact-label">Email</div>
+            <div class="contact-value">forthrightevents@gmail.com</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-label">Location</div>
+            <div class="contact-value">Metro Manila, Philippines</div>
+          </div>
         </div>
       </div>
-
-      <!-- Past Tab -->
-      <div class="tab-panel" id="panel-past">
-        <div class="past-grid" id="pastGrid">
-          <div class="events-loading">Loading events…</div>
-        </div>
-      </div>
+      <form class="contact-form" action="https://formspree.io/f/xwvyqzbz" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="text" name="company" placeholder="Company / Organization">
+        <!-- <input type="text" name="event_type" placeholder="Type of Event"> -->
+        <textarea name="message" placeholder="Tell us about your event…" rows="4"></textarea>
+        <button type="submit" class="btn-primary">Send Message →</button>
+      </form>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- CTA BAND -->
-  <section class="cta-band">
-    <div class="container">
-      <h2>Want us to run your next event?</h2>
-      <p>Get in touch and we'll put together a proposal.</p>
-      <a href="index.html#contact" class="btn btn-primary btn-lg">Get in Touch</a>
-    </div>
-  </section>
+<!-- FOOTER -->
+<footer class="footer">
+  <p>&copy; 2026 <strong>Forthright Events Management</strong>. All rights reserved. &middot; Metro Manila, Philippines</p>
+</footer>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="container">
-      <div class="footer-inner">
-        <div class="footer-logo">
-          <span class="logo-main">FORTHRIGHT</span>
-          <span class="logo-sub">Events Management</span>
-        </div>
-        <p class="footer-copy">© <span id="footerYear"></span> Forthright Events Management. All rights reserved.</p>
-        <a href="admin/" class="footer-admin">Admin</a>
-      </div>
-    </div>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="js/supabase-config.js"></script>
-  <script src="js/events.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
