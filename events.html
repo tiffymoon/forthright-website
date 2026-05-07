@@ -53,6 +53,11 @@
     </div>
 
     <div id="past-panel" class="tab-panel">
+      <div class="filter-bar">
+        <input type="text" id="filter-name" placeholder="Search by name…" oninput="filterPastEvents()">
+        <input type="text" id="filter-date" placeholder="e.g. 2025 or May 2025" oninput="filterPastEvents()">
+        <button class="btn-clear-filter" onclick="clearFilters()">Clear</button>
+      </div>
       <div class="events-grid" id="past-grid"><p class="loading-msg">Loading…</p></div>
       <div class="empty-state" id="past-empty">No past events recorded yet.</div>
     </div>
@@ -67,21 +72,18 @@
         <h2>Let's plan your next event</h2>
         <p>Get in touch with our team to discuss your requirements.</p>
         <div class="contact-item">
-          <div class="contact-icon">📞</div>
           <div>
             <div class="contact-label">Phone</div>
             <div class="contact-value">0917 526 5614 or 0998 511 0454</div>
           </div>
         </div>
         <div class="contact-item">
-          <div class="contact-icon">✉️</div>
           <div>
             <div class="contact-label">Email</div>
             <div class="contact-value">forthrightevents@gmail.com</div>
           </div>
         </div>
         <div class="contact-item">
-          <div class="contact-icon">📍</div>
           <div>
             <div class="contact-label">Location</div>
             <div class="contact-value">Metro Manila, Philippines</div>
