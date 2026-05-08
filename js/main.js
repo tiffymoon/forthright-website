@@ -234,7 +234,7 @@ function eventCard(e, isPast) {
       <div class="card-body">
         <h3 class="card-title">${e.title}</h3>
         <p class="card-date">${dateStr}${e.event_time ? ' · ' + e.event_time : ''}</p>
-        ${e.location ? `<p class="card-location">${e.location}${e.location_url ? ` <a href="${e.location_url}" target="_blank" class="directions-link">(How to get there)</a>` : ''}</p>` : ''}
+        ${e.location ? `<p class="card-location">${e.location}</p>` : ''}
         ${albumBtn}
       </div>
     </div>`;
