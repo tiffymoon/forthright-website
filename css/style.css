@@ -96,6 +96,15 @@ a   { color: inherit; text-decoration: none; }
   transition: .3s;
 }
 
+.nav-links a svg {
+  display: block;
+  color: var(--text-muted);
+  transition: color .2s;
+}
+.nav-links a:hover svg {
+  color: var(--green);
+}
+
 /* ── HERO ── */
 .hero {
   background-image:
