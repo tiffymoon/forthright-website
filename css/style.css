@@ -216,7 +216,6 @@ animation: hero-zoom 4s ease-out forwards;
   overflow: hidden;
   transition: transform .2s, box-shadow .2s;
 }
-.service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 
 .service-card-img {
   height: 200px;
@@ -292,7 +291,6 @@ animation: hero-zoom 4s ease-out forwards;
   display: flex; align-items: center; gap: 1.25rem;
   transition: transform .2s, box-shadow .2s;
 }
-.event-list-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
 
 .elc-logo {
   width: 56px; height: 56px; flex-shrink: 0;
@@ -674,21 +672,27 @@ animation: hero-zoom 4s ease-out forwards;
   }
   .events-list {
     display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 1rem;
-    padding-bottom: .5rem;
-  }
-  .events-list::-webkit-scrollbar { display: none; }
-  .event-list-card {
-    min-width: 280px;
-    scroll-snap-align: start;
-    flex-shrink: 0;
     flex-direction: column;
-    align-items: flex-start;
+    overflow-x: unset;
+    gap: 0;
+    padding-bottom: 0;
+  }
+  .event-list-card {
+    min-width: unset;
+    flex-shrink: unset;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    padding: 1rem 0;
+    box-shadow: none;
+    background: transparent;
+  }
+  .event-list-card:last-child {
+    border-bottom: none;
+  }
+  .event-list-card .elc-logo,
+  .event-list-card .elc-avatar {
+    display: none;
   }
 }
 
