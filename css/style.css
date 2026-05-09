@@ -318,7 +318,7 @@ animation: hero-zoom 4s ease-out forwards;
 }
 
 .elc-meta {
-  font-size: .82rem; color: var(--text-muted);
+  font-size: .9rem; color: var(--text-muted);
   margin-bottom: .15rem;
 }
 
