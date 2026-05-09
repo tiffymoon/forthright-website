@@ -431,11 +431,11 @@ animation: hero-zoom 4s ease-out forwards;
 }
 
 .event-row-date {
-  font-size: .82rem; color: var(--text-muted);
+  font-size: .9rem; color: var(--text-muted);
 }
 
 .event-row-venue {
-  font-size: .82rem; color: var(--text-muted);
+  font-size: .9rem; color: var(--text-muted);
 }
 
 /* ── FILTER BAR ── */
@@ -491,7 +491,7 @@ animation: hero-zoom 4s ease-out forwards;
   margin-bottom: .5rem; line-height: 1.25;
 }
 .card-date, .card-location, .card-spots {
-  font-size: .85rem; color: var(--text-muted);
+  font-size: .9rem; color: var(--text-muted);
   margin-bottom: .25rem;
 }
 /* Price uses darker green for sufficient contrast on white */
@@ -647,7 +647,49 @@ animation: hero-zoom 4s ease-out forwards;
   .nav-links a { display: block; padding: .75rem 2rem; }
   .nav-toggle { display: flex; }
   .nav-toggle span { background: var(--green); }
-  .section { padding: 3.5rem 1.25rem; }
+.section { padding: 3.5rem 1.25rem; }
+
+  /* Services stack on mobile */
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  .service-card {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  /* Upcoming events horizontal scroll */
+  .events-list-wrapper {
+    position: relative;
+  }
+  .events-list-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 48px;
+    background: linear-gradient(to left, var(--cream), transparent);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .events-list {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 1rem;
+    padding-bottom: .5rem;
+  }
+  .events-list::-webkit-scrollbar { display: none; }
+  .event-list-card {
+    min-width: 280px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 @keyframes hero-zoom {
