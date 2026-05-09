@@ -196,6 +196,18 @@ async function uploadCoverImage() {
   return urlData.publicUrl;
 }
 
+function removeCoverImage() {
+  document.getElementById('f-cover_image').value = '';
+  document.getElementById('f-cover_image_file').value = '';
+  document.getElementById('cover-preview').style.display = 'none';
+}
+
+function removeClientLogo() {
+  document.getElementById('fc-logo_url').value = '';
+  document.getElementById('fc-logo_file').value = '';
+  document.getElementById('logo-preview').style.display = 'none';
+}
+
 async function saveEvent() {
   const btn = document.getElementById('saveBtn');
   btn.disabled = true; btn.textContent = 'Saving…';
@@ -266,8 +278,8 @@ async function loadClients() {
       <span class="toggle-text">${c.featured ? 'Yes' : 'No'}</span>
     </label></td>
     <td class="actions-cell">
-      <button class="btn-edit" onclick="editEvent('${c.id}')">Edit</button>
-      <button class="btn-del" onclick="deleteEvent('${c.id}', '${c.name.replace(/'/g,"\\'")}')">Delete</button>
+      <button class="btn-edit" onclick="editClient('${c.id}')">Edit</button>
+      <button class="btn-del" onclick="deleteClient('${c.id}', '${c.name.replace(/'/g,"\\'")}')">Delete</button>
     </td>
   </tr>`).join('');
 }
