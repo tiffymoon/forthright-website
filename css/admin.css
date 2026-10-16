@@ -187,6 +187,7 @@ body {
 .status-badge { font-size: .72rem; font-weight: 700; padding: .22rem .65rem; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; }
 .status-upcoming { background: rgba(48,107,68,.12); color: var(--green-light); }
 .status-past     { background: rgba(90,114,100,.1);  color: var(--text-muted); }
+.status-ongoing { background: rgba(196,138,26,.14); color: #9a6a0a; }
 
 .badge-feat { color: var(--amber); font-size: .9rem; }
 
