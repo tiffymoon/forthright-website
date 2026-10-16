@@ -94,7 +94,10 @@ async function loadEvents() {
 
   tbody.innerHTML = sorted.map(e => {
     const d = new Date(e.event_date + 'T00:00:00').toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-    const status = e.event_date >= new Date().toISOString().split('T')[0] ? 'upcoming' : 'completed';
+    const todayStr = new Date().toISOString().split('T')[0];
+const status = e.event_date >= todayStr ? 'upcoming'
+  : (e.end_date && e.end_date >= todayStr) ? 'ongoing'
+  : 'completed';
     return `<tr>
       <td><strong>${e.title}</strong></td>
       <td>${e.clients ? e.clients.name : '—'}</td>

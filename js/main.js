@@ -21,8 +21,9 @@ async function loadEvents() {
     return;
   }
 
-  const upcoming = events.filter(e => e.event_date >= today);
-  const past     = events.filter(e => e.event_date <  today).reverse();
+  const isCurrentOrFuture = e => (e.end_date || e.event_date) >= today;
+  const upcoming = events.filter(isCurrentOrFuture);
+  const past     = events.filter(e => !isCurrentOrFuture(e)).reverse();
 
   // Homepage: show max 4 upcoming
   if (isHomepage) {
